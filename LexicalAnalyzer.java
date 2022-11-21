@@ -314,6 +314,7 @@ public class LexicalAnalyzer {
     grammar.put("NUMBR Literal", "^-?\\d+$");
     grammar.put("HAI", "^HAI$");
     grammar.put("KTHXBYE", "^KTHXBYE$");
+    grammar.put("Variable", "^[A-Za-z]+[A-Za-z0-9_]*$");
     //grammar.put("NUMBAR Literal", "^[+-]?([0-9]+[.]){1}[0-9]+");
     grammar.put("NUMBAR Literal", "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
     grammar.put("YARN Literal", "^\".*\"$");
@@ -322,7 +323,8 @@ public class LexicalAnalyzer {
     grammar.put("Printing", "^VISIBLE ("+ grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1)+"|"
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|" //.substring removes ^ and $ from the strings
         + grammar.get("YARN Literal").substring( 1,  grammar.get("YARN Literal").length()-1)+"|"
-        + grammar.get("TROOF Literal").substring( 1,  grammar.get("TROOF Literal").length()-1)
+        + grammar.get("TROOF Literal").substring( 1,  grammar.get("TROOF Literal").length()-1) +"|"
+        + grammar.get("Variable").replaceAll("^.|.$", "")
         +")$");
     grammar.put("Addition","^SUM OF (" 
     + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"

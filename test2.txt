@@ -1,5 +1,9 @@
 HAI
+    I HAS A thing ITZ 12.10
+    VISIBLE thing
     VISIBLE 5.13
+    I HAS A number
+    VISIBLE "HAI WORLD!!!1!"
     SUM OF 2 AN 4
     DIFF OF 4 AN 3.14
     PRODUKT OF 2 AN 7
