@@ -11,7 +11,7 @@ import java.util.regex.*;
 //import java.util.HashSet;
 
 
-public class LexicalAnalyzer {
+public class SyntaxAnalyzer {
   public static void main(String[] args) {
     ArrayList<String> array = new ArrayList<>();  //strings from the input lolcode are put here, initial array
     
@@ -319,7 +319,8 @@ public class LexicalAnalyzer {
     grammar.put("NUMBAR Literal", "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
     grammar.put("YARN Literal", "^\".*\"$");
     grammar.put("TROOF Literal", "^WIN$|^FAIL$"); //.substring() doesnt produce correct results kaya inalter muna yung values, should be ^WIN$|^FAIL$
-    grammar.put("Variable Declaration", "^I HAS A [A-Za-z]+[A-Za-z0-9_]* ITZ [-?\\d+|\"-?\\d+\"]*$");
+    grammar.put("Variable Initialization", "^I HAS A [A-Za-z]+[A-Za-z0-9_]* ITZ [-?\\d+|\"-?\\d+\"]*$");
+    grammar.put("Variable Declaration", "^I HAS A [A-Za-z]+[A-Za-z0-9_]*$");
     grammar.put("Printing", "^VISIBLE ("+ grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1)+"|"
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|" //.substring removes ^ and $ from the strings
         + grammar.get("YARN Literal").substring( 1,  grammar.get("YARN Literal").length()-1)+"|"
