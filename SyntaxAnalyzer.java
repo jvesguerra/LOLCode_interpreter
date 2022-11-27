@@ -4,10 +4,13 @@
 
 import java.io.File;  
 import java.io.FileNotFoundException;  
-import java.util.Scanner; 
+import java.util.Scanner;
+import java.util.Map.Entry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.*;
 //import java.util.HashSet;
 
@@ -339,6 +342,8 @@ public class SyntaxAnalyzer {
         grammar = grammar_map(grammar);
         // map to determine syntax errors
         HashMap<String, String> correct_syntax = new HashMap<String, String>(); 
+        HashMap<Integer, ArrayList<String>> func_map = new HashMap<Integer, ArrayList<String>>();
+        //HashMap<Integer, List<String>> func_map = new HashMap<Integer, List<String>>();
 
 
         // read file and store strings into array 
@@ -435,7 +440,22 @@ public class SyntaxAnalyzer {
             if(tokens_syntax.get(0).equals("HAI") || tokens_syntax.get(tokens_syntax_size).equals("KTHXBYE")){
                     // BUILD FINAL SYNTAX TOKENS
                     final_syntax_tokens = get_final_syntax_tokens(tokens_syntax, final_syntax_tokens, tokens_syntax_size);
-                    //System.out.println(final_syntax_tokens);
+
+                    int op_counter = 0;
+                    for(int i = 0; i < final_syntax_tokens.size(); i += 1){
+                        if(final_syntax_tokens.get(i).equals("~newline~")){
+                            op_counter += 1;
+                        }else{
+                            if(func_map.get(op_counter) == null){
+                                func_map.put(op_counter, new ArrayList<>(Arrays.asList(final_syntax_tokens.get(i))));
+                            }else{
+                                func_map.get(op_counter).add(final_syntax_tokens.get(i));
+                            }
+                            
+                        }  
+                    }
+                    System.out.println(func_map);
+
 
                     // build statements array by new line
                     statements_array = build_statements_array(statements_array, final_syntax_tokens);
