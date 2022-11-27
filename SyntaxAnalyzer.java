@@ -307,21 +307,21 @@ public class SyntaxAnalyzer {
         return statements_array;
     }
     
-    static HashMap<String, String> check_correct_syntax(ArrayList<String> statements_array,HashMap<String, String> grammar,HashMap<String, String> correct_syntax){
-        for(int i = 0; i < statements_array.size(); i++){
-            boolean found = false;
-            for (HashMap.Entry<String, String> set:grammar.entrySet()){
-                if(Pattern.matches(set.getValue(),statements_array.get(i))){  //comparing yung each regex value sa array which containts code_line values
-                    correct_syntax.put(statements_array.get(i), set.getKey());
-                    found = true;
-                }
-            }if (found == false){
-                System.out.println(statements_array.get(i) + " Syntax Error");
-                i = statements_array.size(); //break
-            }
-        }
-        return correct_syntax;
-    }
+    // static HashMap<String, String> check_correct_syntax(ArrayList<String> statements_array,HashMap<String, String> grammar,HashMap<String, String> correct_syntax){
+    //     for(int i = 0; i < statements_array.size(); i++){
+    //         boolean found = false;
+    //         for (HashMap.Entry<String, String> set:grammar.entrySet()){
+    //             if(Pattern.matches(set.getValue(),statements_array.get(i))){  //comparing yung each regex value sa array which containts code_line values
+    //                 correct_syntax.put(statements_array.get(i), set.getKey());
+    //                 found = true;
+    //             }
+    //         }if (found == false){
+    //             System.out.println(statements_array.get(i) + " Syntax Error");
+    //             i = statements_array.size(); //break
+    //         }
+    //     }
+    //     return correct_syntax;
+    // }
 
     public static void main(String[] args) {
 
@@ -342,13 +342,12 @@ public class SyntaxAnalyzer {
         grammar = grammar_map(grammar);
         // map to determine syntax errors
         HashMap<String, String> correct_syntax = new HashMap<String, String>(); 
-        HashMap<Integer, ArrayList<String>> func_map = new HashMap<Integer, ArrayList<String>>();
-        //HashMap<Integer, List<String>> func_map = new HashMap<Integer, List<String>>();
+        HashMap<Integer, ArrayList<String>> for_sem_analysis = new HashMap<Integer, ArrayList<String>>();
 
 
         // read file and store strings into array 
         try {                                      
-        File file = new File("test2.txt");
+        File file = new File("test3.txt");
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
             String data = scanner.nextLine();
@@ -441,20 +440,21 @@ public class SyntaxAnalyzer {
                     // BUILD FINAL SYNTAX TOKENS
                     final_syntax_tokens = get_final_syntax_tokens(tokens_syntax, final_syntax_tokens, tokens_syntax_size);
 
+                    // build hashmap for semantic analysis
                     int op_counter = 0;
                     for(int i = 0; i < final_syntax_tokens.size(); i += 1){
                         if(final_syntax_tokens.get(i).equals("~newline~")){
                             op_counter += 1;
                         }else{
-                            if(func_map.get(op_counter) == null){
-                                func_map.put(op_counter, new ArrayList<>(Arrays.asList(final_syntax_tokens.get(i))));
+                            if(for_sem_analysis.get(op_counter) == null){
+                                for_sem_analysis.put(op_counter, new ArrayList<>(Arrays.asList(final_syntax_tokens.get(i))));
                             }else{
-                                func_map.get(op_counter).add(final_syntax_tokens.get(i));
+                                for_sem_analysis.get(op_counter).add(final_syntax_tokens.get(i));
                             }
                             
                         }  
                     }
-                    System.out.println(func_map);
+                    //System.out.println(func_map);
 
 
                     // build statements array by new line
@@ -464,7 +464,65 @@ public class SyntaxAnalyzer {
                     //System.out.println(statements_array);
 
                     // Checks if syntax is correct
-                    correct_syntax = check_correct_syntax(statements_array, grammar, correct_syntax);
+                    //correct_syntax = check_correct_syntax(statements_array, grammar, correct_syntax);
+                    for(int i = 0; i < statements_array.size(); i++){
+                        boolean found = false;
+                        for (HashMap.Entry<String, String> set:grammar.entrySet()){
+                            if(Pattern.matches(set.getValue(),statements_array.get(i))){  //comparing yung each regex value sa array which containts code_line values
+                                correct_syntax.put(statements_array.get(i), set.getKey());
+                                //System.out.println(for_sem_analysis.get(i));
+                                if (for_sem_analysis.get(i).size() == 4){
+                                    ArrayList<String> temp = for_sem_analysis.get(i); //new array
+                                    float num1 = Float.parseFloat(temp.get(1));
+                                    float num2 = Float.parseFloat(temp.get(3));
+                                    if(temp.get(0).equals("SUM OF")){
+                                        float sum = num1 + num2;
+                                        System.out.println(sum);
+                                    }else if(temp.get(0).equals("DIFF OF")){
+                                        float difference = num1 - num2;
+                                        System.out.println(difference);
+                                    }
+                                    else if(temp.get(0).equals("PRODUKT OF")){
+                                        float product = num1 * num2;
+                                        System.out.println(product);
+                                    }
+                                    else if(temp.get(0).equals("QUOSHUNT OF")){
+                                        float quotient = num1 / num2;
+                                        System.out.println(quotient);
+                                    }
+                                    else if(temp.get(0).equals("MOD OF")){
+                                        float modulo = num1 % num2;
+                                        System.out.println(modulo);
+                                    }
+                                    else if(temp.get(0).equals("BOTH SAEM")){
+                                        if(num1 == num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }
+                                    else if(temp.get(0).equals("DIFFRINT")){
+                                        if(num1 != num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }
+                                }
+                                found = true;
+                            }
+                        }if (found == false){
+                            System.out.println(statements_array.get(i) + " Syntax Error");
+                            i = statements_array.size(); //break
+                        }
+                    }
+
+                    // System.out.println("FINAL SYNTAX TOKENS");
+                    // System.out.println(final_syntax_tokens);
+                    // System.out.println("FUNC_MAP");
+                    // System.out.println(func_map);
+                    // System.out.println("STATEMENTS ARRAY");
+                    // System.out.println(statements_array);
             }
         }else{
             System.out.println("Syntax Error");
