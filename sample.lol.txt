@@ -1,0 +1,7 @@
+HAI
+    VISIBLE "String"
+    I HAS A num3 ITZ
+    SUM OF 5 AN num3
+    I HAS A thing ITZ 12.10
+    VISIBLE thing
+KTHXBYE

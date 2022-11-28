@@ -412,7 +412,7 @@ public class SyntaxAnalyzer {
 
         // read file and store strings into array 
         try {                                      
-        File file = new File("test3.txt");
+        File file = new File("presentation.txt");
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
             String data = scanner.nextLine();
@@ -527,7 +527,7 @@ public class SyntaxAnalyzer {
                     //remove spaces sa harap ng items sa statement array
                     statements_array = clean_statements_array(statements_array);
 
-                    System.out.println(statements_array);
+                    //System.out.println(statements_array);
 
                     // Checks if syntax is correct
                     //correct_syntax = check_correct_syntax(statements_array, grammar, correct_syntax);
@@ -604,7 +604,7 @@ public class SyntaxAnalyzer {
                                     }
                                 }
                                 else if(for_sem_analysis.get(i).size() == 7){
-                                    System.out.println(temp);
+                                    //System.out.println(temp);
                                     // get values
                                     if(var_map.containsKey(temp.get(4))){
                                         num1 = Float.parseFloat(var_map.get(temp.get(4)));
@@ -649,6 +649,11 @@ public class SyntaxAnalyzer {
                                     } 
 
                                 }
+                                else if(for_sem_analysis.get(i).size() == 2){
+                                    if(temp.get(0).equals("VISIBLE")){
+                                        System.out.println(temp.get(1));
+                                    }
+                                }
                             }
                         }
                         if (found == false){
@@ -657,6 +662,8 @@ public class SyntaxAnalyzer {
                         }
                     }
                 }
+            }else{
+                System.out.println(" Syntax Error");
             }
         }
 }
