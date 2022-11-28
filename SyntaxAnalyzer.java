@@ -193,7 +193,7 @@ public class SyntaxAnalyzer {
             + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|" //.substring removes ^ and $ from the strings
             + grammar.get("YARN Literal").substring( 1,  grammar.get("YARN Literal").length()-1)+"|"
             + grammar.get("TROOF Literal").substring( 1,  grammar.get("TROOF Literal").length()-1) +"|"
-            //+ grammar.get("Variable").replaceAll("^.|.$", "")
+            + var.get("Variable").replaceAll("^.|.$", "")
             + "^[A-Za-z]+[A-Za-z0-9_]*$"
             +")$");
         grammar.put("Addition","^SUM OF (" 
@@ -208,65 +208,120 @@ public class SyntaxAnalyzer {
     
         grammar.put("Subtraction","^DIFF OF (" 
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) + ") AN ("
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        ") AN ("
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +")$");
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
+
         grammar.put("Multiplication","^PRODUKT OF (" 
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) + ") AN ("
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        ") AN ("
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +")$");
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
+
         grammar.put("Division","^QUOSHUNT OF (" 
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) + ") AN ("
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        ") AN ("
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +")$");
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
+
         grammar.put("Mod","^MOD OF (" 
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) + ") AN ("
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        ") AN ("
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +")$");
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
         
         //COMPARISON OPERATIONS
         grammar.put("Both saem","^BOTH SAEM (" 
         + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") + ") AN ("
+        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        ") AN ("
         + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +")$");
+        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
     
         grammar.put("Diffrint","^DIFFRINT (" 
         + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") + ") AN ("
+        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        ") AN ("
         + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +")$");
+        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
     
         grammar.put("Both saem smallr","^BOTH SAEM (" 
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) + ") AN SMALLR OF ("
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        ") AN SMALLR OF ("
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +") AN ("+ grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +")$");
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        ") AN ("
+        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
     
         grammar.put("Both saem biggr","^BOTH SAEM (" 
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) + ") AN BIGGR OF ("
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") AN BIGGR OF ("
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +") AN ("+ grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +")$");
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") AN ("
+        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
     
         grammar.put("Diffrint smallr","^DIFFRINT (" 
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) + ") AN SMALLR OF ("
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") AN SMALLR OF ("
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +") AN ("+ grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +")$");
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") AN ("
+        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
     
         grammar.put("Diffrint biggr","^DIFFRINT (" 
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) + ") AN BIGGR OF ("
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") AN BIGGR OF ("
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +") AN ("+ grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +")$");
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") AN ("
+        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
         return grammar;
     }
     
@@ -307,8 +362,6 @@ public class SyntaxAnalyzer {
         String code_line = "";
         for(int i = 0; i < final_syntax_tokens.size(); i++){
             if(final_syntax_tokens.get(i).equals("~newline~")){
-                // check code line
-                // System.out.println(code_line);
                 statements_array.add(code_line);    //add to new array
                 code_line = "";
             }else{
@@ -438,15 +491,14 @@ public class SyntaxAnalyzer {
         // set final token as invalid token
         pairs = get_invalid_tokens(pairs, final_tokens);
 
-        System.out.println(pairs);
+        //System.out.println(pairs);
+
         // PART 2. SYNTAX ALAYZER
         // if 1 run, else halt program
 
         // DECLARATIONS
         int run = run_syntax_analyzer(pairs);
         int tokens_syntax_size = tokens_syntax.size()-2;  // -2 since last data is KTHNXBYE, ~newline~  
-
-        //System.out.println();
 
         if(run == 1){
             if(tokens_syntax.get(0).equals("HAI") || tokens_syntax.get(tokens_syntax_size).equals("KTHXBYE")){
@@ -467,14 +519,15 @@ public class SyntaxAnalyzer {
                             
                         }  
                     }
-                    //System.out.println(func_map);
-
+                    
+                    //System.out.println(for_sem_analysis);
 
                     // build statements array by new line
                     statements_array = build_statements_array(statements_array, final_syntax_tokens);
                     //remove spaces sa harap ng items sa statement array
                     statements_array = clean_statements_array(statements_array);
-                    //System.out.println(statements_array);
+
+                    System.out.println(statements_array);
 
                     // Checks if syntax is correct
                     //correct_syntax = check_correct_syntax(statements_array, grammar, correct_syntax);
@@ -483,15 +536,13 @@ public class SyntaxAnalyzer {
                         for (HashMap.Entry<String, String> set:grammar.entrySet()){
                             if(Pattern.matches(set.getValue(),statements_array.get(i))){  //comparing yung each regex value sa array which containts code_line values
                                 correct_syntax.put(statements_array.get(i), set.getKey());
+                                found = true;
                                 //System.out.println(for_sem_analysis.get(i));
+                                ArrayList<String> temp = for_sem_analysis.get(i); //new array
+                                float num1;
+                                float num2;
                                 if (for_sem_analysis.get(i).size() == 4){
-                                    ArrayList<String> temp = for_sem_analysis.get(i); //new array
-
-                                    // get value from variables
-                                    float num1;
-                                    float num2;
-
-                                    // if variable declaration
+                                    // if variable declaration -->  get value from variables
                                     if(temp.get(0).equals("I HAS A")){
                                         var_map.put(temp.get(1),temp.get(3));
                                     }else{
@@ -507,8 +558,7 @@ public class SyntaxAnalyzer {
                                         }else{
                                             num2 = Float.parseFloat(temp.get(3));
                                         }
-                                        // num1 = Float.parseFloat(temp.get(1));
-                                        // num2 = Float.parseFloat(temp.get(3));
+
                                         if(temp.get(0).equals("SUM OF")){
                                             float sum = num1 + num2;
                                             System.out.println(sum);
@@ -529,10 +579,19 @@ public class SyntaxAnalyzer {
                                             System.out.println(modulo);
                                         }
                                         else if(temp.get(0).equals("BOTH SAEM")){
-                                            if(num1 == num2){
-                                                System.out.println("TRUE");
+                                            if(temp.get(3).equals("BIGGR OF")){
+                                                if(num1 >= num2){
+                                                    System.out.println("TRUE");
+                                                }else{
+                                                    System.out.println("FALSE");
+                                                }
                                             }else{
-                                                System.out.println("FALSE");
+                                                if(num1 == num2){
+                                                    System.out.println("TRUE");
+                                                }else{
+                                                    System.out.println("FALSE");
+                                                }
+                                                
                                             }
                                         }
                                         else if(temp.get(0).equals("DIFFRINT")){
@@ -543,26 +602,61 @@ public class SyntaxAnalyzer {
                                             }
                                         }
                                     }
+                                }
+                                else if(for_sem_analysis.get(i).size() == 7){
+                                    System.out.println(temp);
+                                    // get values
+                                    if(var_map.containsKey(temp.get(4))){
+                                        num1 = Float.parseFloat(var_map.get(temp.get(4)));
+                                    }else{
+                                        num1 = Float.parseFloat(temp.get(4));
+                                    }
+                                    if(var_map.containsKey(temp.get(6))){
+                                        num2 = Float.parseFloat(var_map.get(temp.get(6)));
+                                    }else{
+                                        num2 = Float.parseFloat(temp.get(6));
+                                    }
 
+                                    if(temp.get(0).equals("BOTH SAEM")){
+                                        if(temp.get(3).equals("BIGGR OF")){
+                                            if(num1 >= num2){
+                                                System.out.println("TRUE");
+                                            }else{
+                                                System.out.println("FALSE");
+                                            }
+                                        }else if(temp.get(3).equals("SMALLR OF")){
+                                            if(num1 <= num2){
+                                                System.out.println("TRUE");
+                                            }else{
+                                                System.out.println("FALSE");
+                                            }
+                                        }
+                                    } 
+                                    if(temp.get(0).equals("DIFFRINT")){
+                                        if(temp.get(3).equals("BIGGR OF")){
+                                            if(num1 < num2){
+                                                System.out.println("TRUE");
+                                            }else{
+                                                System.out.println("FALSE");
+                                            }
+                                        }else if(temp.get(3).equals("SMALLR OF")){
+                                            if(num1 > num2){
+                                                System.out.println("TRUE");
+                                            }else{
+                                                System.out.println("FALSE");
+                                            }
+                                        }
+                                    } 
 
                                 }
-                                found = true;
                             }
-                        }if (found == false){
+                        }
+                        if (found == false){
                             System.out.println(statements_array.get(i) + " Syntax Error");
                             i = statements_array.size(); //break
                         }
                     }
-
-                    // System.out.println("FINAL SYNTAX TOKENS");
-                    // System.out.println(final_syntax_tokens);
-                    // System.out.println("FUNC_MAP");
-                    // System.out.println(func_map);
-                    // System.out.println("STATEMENTS ARRAY");
-                    // System.out.println(statements_array);
+                }
             }
-        }else{
-            System.out.println("Syntax Error");
         }
-  }
 }
