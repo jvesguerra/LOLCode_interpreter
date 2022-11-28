@@ -7,4 +7,8 @@ HAI
     BOTH SAEM 1 AN 2
     DIFFRINT 3 AN 4
     SUM OF 3 AN 4
+    I HAS A num3 ITZ 7
+    I HAS A num4 ITZ 5
+    SUM OF num3 AN 3
+    SUM OF num3 AN num4
 KTHXBYE

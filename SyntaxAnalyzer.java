@@ -140,7 +140,10 @@ public class SyntaxAnalyzer {
                     char ch = final_tokens.get(i).charAt(0);   
                     if(Character.isAlphabetic(ch)){ 
                         if(final_tokens.get(i-1).equals("I HAS A")){
-                            pairs.put(final_tokens.get(i),"Variable"); //put into 'pairs' hashmap
+                            if(Pattern.matches("^[A-Za-z]+[A-Za-z0-9_]*$",final_tokens.get(i))){
+                                pairs.put(final_tokens.get(i),"Variable"); //put into 'pairs' hashmap
+                            }
+                            
                         }
                     }
                 }
@@ -173,10 +176,13 @@ public class SyntaxAnalyzer {
         //ginamit yung value ng ibang items sa grammar para iconcatenate sa printing,
         // {Printing=^VISIBLE -?\d+|VISIBLE [+-]?([0-9]+[.]){1}[0-9]|VISIBLE ".*"|VISIBLE WIN|FAIL$ <- value of Printing
         //str.replaceAll("^.|.$", ""), pwede gawin to remove ^ and $ sa strings
+        HashMap<String, String> var = new HashMap<String, String>();
+        var.put("Variable", "^[A-Za-z]+[A-Za-z0-9_]*$");
+        //String VARIABLE = "^[A-Za-z]+[A-Za-z0-9_]*$";
         grammar.put("NUMBR Literal", "^-?\\d+$");
         grammar.put("HAI", "^HAI$");
         grammar.put("KTHXBYE", "^KTHXBYE$");
-        grammar.put("Variable", "^[A-Za-z]+[A-Za-z0-9_]*$");
+        //grammar.put("Variable", "^[A-Za-z]+[A-Za-z0-9_]*$");
         //grammar.put("NUMBAR Literal", "^[+-]?([0-9]+[.]){1}[0-9]+");
         grammar.put("NUMBAR Literal", "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
         grammar.put("YARN Literal", "^\".*\"$");
@@ -187,13 +193,18 @@ public class SyntaxAnalyzer {
             + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|" //.substring removes ^ and $ from the strings
             + grammar.get("YARN Literal").substring( 1,  grammar.get("YARN Literal").length()-1)+"|"
             + grammar.get("TROOF Literal").substring( 1,  grammar.get("TROOF Literal").length()-1) +"|"
-            + grammar.get("Variable").replaceAll("^.|.$", "")
+            //+ grammar.get("Variable").replaceAll("^.|.$", "")
+            + "^[A-Za-z]+[A-Za-z0-9_]*$"
             +")$");
         grammar.put("Addition","^SUM OF (" 
         + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") + ") AN ("
+        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") AN ("
         + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +")$");
+        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
     
         grammar.put("Subtraction","^DIFF OF (" 
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
@@ -343,6 +354,7 @@ public class SyntaxAnalyzer {
         // map to determine syntax errors
         HashMap<String, String> correct_syntax = new HashMap<String, String>(); 
         HashMap<Integer, ArrayList<String>> for_sem_analysis = new HashMap<Integer, ArrayList<String>>();
+        HashMap<String, String> var_map = new HashMap<String, String>();
 
 
         // read file and store strings into array 
@@ -426,6 +438,7 @@ public class SyntaxAnalyzer {
         // set final token as invalid token
         pairs = get_invalid_tokens(pairs, final_tokens);
 
+        System.out.println(pairs);
         // PART 2. SYNTAX ALAYZER
         // if 1 run, else halt program
 
@@ -473,41 +486,65 @@ public class SyntaxAnalyzer {
                                 //System.out.println(for_sem_analysis.get(i));
                                 if (for_sem_analysis.get(i).size() == 4){
                                     ArrayList<String> temp = for_sem_analysis.get(i); //new array
-                                    float num1 = Float.parseFloat(temp.get(1));
-                                    float num2 = Float.parseFloat(temp.get(3));
-                                    if(temp.get(0).equals("SUM OF")){
-                                        float sum = num1 + num2;
-                                        System.out.println(sum);
-                                    }else if(temp.get(0).equals("DIFF OF")){
-                                        float difference = num1 - num2;
-                                        System.out.println(difference);
-                                    }
-                                    else if(temp.get(0).equals("PRODUKT OF")){
-                                        float product = num1 * num2;
-                                        System.out.println(product);
-                                    }
-                                    else if(temp.get(0).equals("QUOSHUNT OF")){
-                                        float quotient = num1 / num2;
-                                        System.out.println(quotient);
-                                    }
-                                    else if(temp.get(0).equals("MOD OF")){
-                                        float modulo = num1 % num2;
-                                        System.out.println(modulo);
-                                    }
-                                    else if(temp.get(0).equals("BOTH SAEM")){
-                                        if(num1 == num2){
-                                            System.out.println("TRUE");
+
+                                    // get value from variables
+                                    float num1;
+                                    float num2;
+
+                                    // if variable declaration
+                                    if(temp.get(0).equals("I HAS A")){
+                                        var_map.put(temp.get(1),temp.get(3));
+                                    }else{
+                                        // if not variable declaration might be an operation
+                                        // check variable if it has a value
+                                        if(var_map.containsKey(temp.get(1))){
+                                            num1 = Float.parseFloat(var_map.get(temp.get(1)));
                                         }else{
-                                            System.out.println("FALSE");
+                                            num1 = Float.parseFloat(temp.get(1));
+                                        }
+                                        if(var_map.containsKey(temp.get(3))){
+                                            num2 = Float.parseFloat(var_map.get(temp.get(3)));
+                                        }else{
+                                            num2 = Float.parseFloat(temp.get(3));
+                                        }
+                                        // num1 = Float.parseFloat(temp.get(1));
+                                        // num2 = Float.parseFloat(temp.get(3));
+                                        if(temp.get(0).equals("SUM OF")){
+                                            float sum = num1 + num2;
+                                            System.out.println(sum);
+                                        }else if(temp.get(0).equals("DIFF OF")){
+                                            float difference = num1 - num2;
+                                            System.out.println(difference);
+                                        }
+                                        else if(temp.get(0).equals("PRODUKT OF")){
+                                            float product = num1 * num2;
+                                            System.out.println(product);
+                                        }
+                                        else if(temp.get(0).equals("QUOSHUNT OF")){
+                                            float quotient = num1 / num2;
+                                            System.out.println(quotient);
+                                        }
+                                        else if(temp.get(0).equals("MOD OF")){
+                                            float modulo = num1 % num2;
+                                            System.out.println(modulo);
+                                        }
+                                        else if(temp.get(0).equals("BOTH SAEM")){
+                                            if(num1 == num2){
+                                                System.out.println("TRUE");
+                                            }else{
+                                                System.out.println("FALSE");
+                                            }
+                                        }
+                                        else if(temp.get(0).equals("DIFFRINT")){
+                                            if(num1 != num2){
+                                                System.out.println("TRUE");
+                                            }else{
+                                                System.out.println("FALSE");
+                                            }
                                         }
                                     }
-                                    else if(temp.get(0).equals("DIFFRINT")){
-                                        if(num1 != num2){
-                                            System.out.println("TRUE");
-                                        }else{
-                                            System.out.println("FALSE");
-                                        }
-                                    }
+
+
                                 }
                                 found = true;
                             }
