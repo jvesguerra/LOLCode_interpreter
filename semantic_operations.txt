@@ -1,0 +1,115 @@
+                            float num1;
+                            float num2;
+                            if (for_sem_analysis.get(i).size() == 4){
+                                // if variable declaration -->  get value from variables
+                                if(temp.get(0).equals("I HAS A")){
+                                    var_map.put(temp.get(1),temp.get(3));
+                                }else{
+                                    // if not variable declaration might be an operation
+                                    // check variable if it has a value
+                                    if(var_map.containsKey(temp.get(1))){
+                                        num1 = Float.parseFloat(var_map.get(temp.get(1)));
+                                    }else{
+                                        num1 = Float.parseFloat(temp.get(1));
+                                    }
+                                    if(var_map.containsKey(temp.get(3))){
+                                        num2 = Float.parseFloat(var_map.get(temp.get(3)));
+                                    }else{
+                                        num2 = Float.parseFloat(temp.get(3));
+                                    }
+
+                                    if(temp.get(0).equals("SUM OF")){
+                                        float sum = num1 + num2;
+                                        System.out.println(sum);
+                                    }else if(temp.get(0).equals("DIFF OF")){
+                                        float difference = num1 - num2;
+                                        System.out.println(difference);
+                                    }
+                                    else if(temp.get(0).equals("PRODUKT OF")){
+                                        float product = num1 * num2;
+                                        System.out.println(product);
+                                    }
+                                    else if(temp.get(0).equals("QUOSHUNT OF")){
+                                        float quotient = num1 / num2;
+                                        System.out.println(quotient);
+                                    }
+                                    else if(temp.get(0).equals("MOD OF")){
+                                        float modulo = num1 % num2;
+                                        System.out.println(modulo);
+                                    }
+                                    else if(temp.get(0).equals("BOTH SAEM")){
+                                        if(temp.get(3).equals("BIGGR OF")){
+                                            if(num1 >= num2){
+                                                System.out.println("TRUE");
+                                            }else{
+                                                System.out.println("FALSE");
+                                            }
+                                        }else{
+                                            if(num1 == num2){
+                                                System.out.println("TRUE");
+                                            }else{
+                                                System.out.println("FALSE");
+                                            }
+                                            
+                                        }
+                                    }
+                                    else if(temp.get(0).equals("DIFFRINT")){
+                                        if(num1 != num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }
+                                }
+                            }
+                            else if(for_sem_analysis.get(i).size() == 7){
+                                //System.out.println(temp);
+                                // get values
+                                if(var_map.containsKey(temp.get(4))){
+                                    num1 = Float.parseFloat(var_map.get(temp.get(4)));
+                                }else{
+                                    num1 = Float.parseFloat(temp.get(4));
+                                }
+                                if(var_map.containsKey(temp.get(6))){
+                                    num2 = Float.parseFloat(var_map.get(temp.get(6)));
+                                }else{
+                                    num2 = Float.parseFloat(temp.get(6));
+                                }
+
+                                if(temp.get(0).equals("BOTH SAEM")){
+                                    if(temp.get(3).equals("BIGGR OF")){
+                                        if(num1 >= num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }else if(temp.get(3).equals("SMALLR OF")){
+                                        if(num1 <= num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }
+                                } 
+                                if(temp.get(0).equals("DIFFRINT")){
+                                    if(temp.get(3).equals("BIGGR OF")){
+                                        if(num1 < num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }else if(temp.get(3).equals("SMALLR OF")){
+                                        if(num1 > num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }
+                                } 
+
+                            }
+                            else if(for_sem_analysis.get(i).size() == 2){
+                                if(temp.get(0).equals("VISIBLE")){
+                                    System.out.println(temp.get(1));
+                                }
+                            }

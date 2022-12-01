@@ -171,7 +171,7 @@ public class SyntaxAnalyzer {
             return syntax_analyzer_run;
     }
     
-    static HashMap<String, String> grammar_map(HashMap<String, String> grammar){
+    static HashMap<String, String> grammar_map(HashMap<String, String> grammar, HashMap<String, String> map){
         //grammar,get(key) ang result is value or yung regex
         //ginamit yung value ng ibang items sa grammar para iconcatenate sa printing,
         // {Printing=^VISIBLE -?\d+|VISIBLE [+-]?([0-9]+[.]){1}[0-9]|VISIBLE ".*"|VISIBLE WIN|FAIL$ <- value of Printing
@@ -187,16 +187,32 @@ public class SyntaxAnalyzer {
         grammar.put("NUMBAR Literal", "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
         grammar.put("YARN Literal", "^\".*\"$");
         grammar.put("TROOF Literal", "^WIN$|^FAIL$"); //.substring() doesnt produce correct results kaya inalter muna yung values, should be ^WIN$|^FAIL$
-        grammar.put("Variable Initialization", "^I HAS A [A-Za-z]+[A-Za-z0-9_]* ITZ [-?\\d+|\"-?\\d+\"]*$");
+        grammar.put("Variable Initialization number", "^I HAS A [A-Za-z]+[A-Za-z0-9_]* ITZ [-?\\d+|\"-?\\d+\"]*$");
+        // grammar.put("Variable Initialization", "^I HAS A [A-Za-z]+[A-Za-z0-9_]* ITZ (" + map.get("Variable").replaceAll("^.|.$", "") 
+        // +")$");
+        grammar.put("Variable Initialization String", "^I HAS A [A-Za-z]+[A-Za-z0-9_]* ITZ \".*\"$");
         grammar.put("Variable Declaration", "^I HAS A [A-Za-z]+[A-Za-z0-9_]*$");
         grammar.put("Printing", "^VISIBLE ("+ grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1)+"|"
             + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|" //.substring removes ^ and $ from the strings
             + grammar.get("YARN Literal").substring( 1,  grammar.get("YARN Literal").length()-1)+"|"
             + grammar.get("TROOF Literal").substring( 1,  grammar.get("TROOF Literal").length()-1) +"|"
             + var.get("Variable").replaceAll("^.|.$", "")
-            + "^[A-Za-z]+[A-Za-z0-9_]*$"
             +")$");
+
+
+
+        
         grammar.put("Addition","^SUM OF (" 
+        + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
+        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") AN ("
+        + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
+        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
+        
+        grammar.put("Addition Exp","^(" 
         + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
         + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
         "|" + var.get("Variable").replaceAll("^.|.$", "") + 
@@ -322,6 +338,17 @@ public class SyntaxAnalyzer {
         + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
         "|" + var.get("Variable").replaceAll("^.|.$", "") + 
         ")$");
+
+        grammar.put("Input Statement","^GIMMEH " + var.get("Variable").replaceAll("^.|.$", "")+"$");
+
+        grammar.put("Expression",grammar.get("Addition Exp").replaceAll("^.|.$", ""));
+        
+        grammar.put("Assignment", var.get("Variable").replaceAll("^.|.$", "") +
+        " R ("
+        + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
+        + 
+        "|" + 
+        ")$");
         return grammar;
     }
     
@@ -371,22 +398,6 @@ public class SyntaxAnalyzer {
         return statements_array;
     }
     
-    // static HashMap<String, String> check_correct_syntax(ArrayList<String> statements_array,HashMap<String, String> grammar,HashMap<String, String> correct_syntax){
-    //     for(int i = 0; i < statements_array.size(); i++){
-    //         boolean found = false;
-    //         for (HashMap.Entry<String, String> set:grammar.entrySet()){
-    //             if(Pattern.matches(set.getValue(),statements_array.get(i))){  //comparing yung each regex value sa array which containts code_line values
-    //                 correct_syntax.put(statements_array.get(i), set.getKey());
-    //                 found = true;
-    //             }
-    //         }if (found == false){
-    //             System.out.println(statements_array.get(i) + " Syntax Error");
-    //             i = statements_array.size(); //break
-    //         }
-    //     }
-    //     return correct_syntax;
-    // }
-
     public static void main(String[] args) {
 
         // DECLARATIONS
@@ -403,7 +414,7 @@ public class SyntaxAnalyzer {
         ArrayList<String> statements_array = new ArrayList<>(); //new array
         // map to check for correct grammar
         HashMap<String, String> grammar = new HashMap<String, String>();
-        grammar = grammar_map(grammar);
+        grammar = grammar_map(grammar,map);
         // map to determine syntax errors
         HashMap<String, String> correct_syntax = new HashMap<String, String>(); 
         HashMap<Integer, ArrayList<String>> for_sem_analysis = new HashMap<Integer, ArrayList<String>>();
@@ -496,174 +507,202 @@ public class SyntaxAnalyzer {
         // PART 2. SYNTAX ALAYZER
         // if 1 run, else halt program
 
+        System.out.println(pairs);
         // DECLARATIONS
         int run = run_syntax_analyzer(pairs);
         int tokens_syntax_size = tokens_syntax.size()-2;  // -2 since last data is KTHNXBYE, ~newline~  
 
-        if(run == 1){
-            if(tokens_syntax.get(0).equals("HAI") || tokens_syntax.get(tokens_syntax_size).equals("KTHXBYE")){
-                    // BUILD FINAL SYNTAX TOKENS
-                    final_syntax_tokens = get_final_syntax_tokens(tokens_syntax, final_syntax_tokens, tokens_syntax_size);
+        if(tokens_syntax.get(0).equals("HAI") || tokens_syntax.get(tokens_syntax_size).equals("KTHXBYE")){
+                // BUILD FINAL SYNTAX TOKENS
+                final_syntax_tokens = get_final_syntax_tokens(tokens_syntax, final_syntax_tokens, tokens_syntax_size);
 
-                    // build hashmap for semantic analysis
-                    int op_counter = 0;
-                    for(int i = 0; i < final_syntax_tokens.size(); i += 1){
-                        if(final_syntax_tokens.get(i).equals("~newline~")){
-                            op_counter += 1;
+                // build hashmap for semantic analysis
+                int op_counter = 0;
+                for(int i = 0; i < final_syntax_tokens.size(); i += 1){
+                    if(final_syntax_tokens.get(i).equals("~newline~")){
+                        op_counter += 1;
+                    }else{
+                        if(for_sem_analysis.get(op_counter) == null){
+                            for_sem_analysis.put(op_counter, new ArrayList<>(Arrays.asList(final_syntax_tokens.get(i))));
                         }else{
-                            if(for_sem_analysis.get(op_counter) == null){
-                                for_sem_analysis.put(op_counter, new ArrayList<>(Arrays.asList(final_syntax_tokens.get(i))));
-                            }else{
-                                for_sem_analysis.get(op_counter).add(final_syntax_tokens.get(i));
-                            }
+                            for_sem_analysis.get(op_counter).add(final_syntax_tokens.get(i));
+                        }
+                        
+                    }  
+                }
+                
+                System.out.println(for_sem_analysis);
+
+                // build statements array by new line
+                statements_array = build_statements_array(statements_array, final_syntax_tokens);
+                //remove spaces sa harap ng items sa statement array
+                statements_array = clean_statements_array(statements_array);
+
+                //System.out.println(statements_array);
+
+                // Checks if syntax is correct
+                //correct_syntax = check_correct_syntax(statements_array, grammar, correct_syntax);
+                for(int i = 0; i < statements_array.size(); i++){
+                    boolean found = false;
+                    for (HashMap.Entry<String, String> set:grammar.entrySet()){
+                        if(Pattern.matches(set.getValue(),statements_array.get(i))){  //comparing yung each regex value sa array which containts code_line values
+                            correct_syntax.put(statements_array.get(i), set.getKey());
+                            found = true;
+                            ArrayList<String> temp = for_sem_analysis.get(i); //new array
+
+                            float num1;
+                            float num2;
                             
-                        }  
-                    }
-                    
-                    //System.out.println(for_sem_analysis);
-
-                    // build statements array by new line
-                    statements_array = build_statements_array(statements_array, final_syntax_tokens);
-                    //remove spaces sa harap ng items sa statement array
-                    statements_array = clean_statements_array(statements_array);
-
-                    //System.out.println(statements_array);
-
-                    // Checks if syntax is correct
-                    //correct_syntax = check_correct_syntax(statements_array, grammar, correct_syntax);
-                    for(int i = 0; i < statements_array.size(); i++){
-                        boolean found = false;
-                        for (HashMap.Entry<String, String> set:grammar.entrySet()){
-                            if(Pattern.matches(set.getValue(),statements_array.get(i))){  //comparing yung each regex value sa array which containts code_line values
-                                correct_syntax.put(statements_array.get(i), set.getKey());
-                                found = true;
-                                //System.out.println(for_sem_analysis.get(i));
-                                ArrayList<String> temp = for_sem_analysis.get(i); //new array
-                                float num1;
-                                float num2;
-                                if (for_sem_analysis.get(i).size() == 4){
-                                    // if variable declaration -->  get value from variables
-                                    if(temp.get(0).equals("I HAS A")){
-                                        var_map.put(temp.get(1),temp.get(3));
+                            if (for_sem_analysis.get(i).size() == 4){
+                                // if variable declaration -->  get value from variables
+                                if(temp.get(0).equals("I HAS A")){
+                                    var_map.put(temp.get(1),temp.get(3));
+                                }else{
+                                    // if not variable declaration might be an operation
+                                    // check variable if it has a value
+                                    if(var_map.containsKey(temp.get(1))){
+                                        num1 = Float.parseFloat(var_map.get(temp.get(1)));
                                     }else{
-                                        // if not variable declaration might be an operation
-                                        // check variable if it has a value
-                                        if(var_map.containsKey(temp.get(1))){
-                                            num1 = Float.parseFloat(var_map.get(temp.get(1)));
-                                        }else{
-                                            num1 = Float.parseFloat(temp.get(1));
-                                        }
-                                        if(var_map.containsKey(temp.get(3))){
-                                            num2 = Float.parseFloat(var_map.get(temp.get(3)));
-                                        }else{
-                                            num2 = Float.parseFloat(temp.get(3));
-                                        }
-
-                                        if(temp.get(0).equals("SUM OF")){
-                                            float sum = num1 + num2;
-                                            System.out.println(sum);
-                                        }else if(temp.get(0).equals("DIFF OF")){
-                                            float difference = num1 - num2;
-                                            System.out.println(difference);
-                                        }
-                                        else if(temp.get(0).equals("PRODUKT OF")){
-                                            float product = num1 * num2;
-                                            System.out.println(product);
-                                        }
-                                        else if(temp.get(0).equals("QUOSHUNT OF")){
-                                            float quotient = num1 / num2;
-                                            System.out.println(quotient);
-                                        }
-                                        else if(temp.get(0).equals("MOD OF")){
-                                            float modulo = num1 % num2;
-                                            System.out.println(modulo);
-                                        }
-                                        else if(temp.get(0).equals("BOTH SAEM")){
-                                            if(temp.get(3).equals("BIGGR OF")){
-                                                if(num1 >= num2){
-                                                    System.out.println("TRUE");
-                                                }else{
-                                                    System.out.println("FALSE");
-                                                }
-                                            }else{
-                                                if(num1 == num2){
-                                                    System.out.println("TRUE");
-                                                }else{
-                                                    System.out.println("FALSE");
-                                                }
-                                                
-                                            }
-                                        }
-                                        else if(temp.get(0).equals("DIFFRINT")){
-                                            if(num1 != num2){
-                                                System.out.println("TRUE");
-                                            }else{
-                                                System.out.println("FALSE");
-                                            }
-                                        }
+                                        num1 = Float.parseFloat(temp.get(1));
                                     }
-                                }
-                                else if(for_sem_analysis.get(i).size() == 7){
-                                    //System.out.println(temp);
-                                    // get values
-                                    if(var_map.containsKey(temp.get(4))){
-                                        num1 = Float.parseFloat(var_map.get(temp.get(4)));
+                                    if(var_map.containsKey(temp.get(3))){
+                                        num2 = Float.parseFloat(var_map.get(temp.get(3)));
                                     }else{
-                                        num1 = Float.parseFloat(temp.get(4));
-                                    }
-                                    if(var_map.containsKey(temp.get(6))){
-                                        num2 = Float.parseFloat(var_map.get(temp.get(6)));
-                                    }else{
-                                        num2 = Float.parseFloat(temp.get(6));
+                                        num2 = Float.parseFloat(temp.get(3));
                                     }
 
-                                    if(temp.get(0).equals("BOTH SAEM")){
+                                    if(temp.get(0).equals("SUM OF")){
+                                        float sum = num1 + num2;
+                                        System.out.println(sum);
+                                    }else if(temp.get(0).equals("DIFF OF")){
+                                        float difference = num1 - num2;
+                                        System.out.println(difference);
+                                    }
+                                    else if(temp.get(0).equals("PRODUKT OF")){
+                                        float product = num1 * num2;
+                                        System.out.println(product);
+                                    }
+                                    else if(temp.get(0).equals("QUOSHUNT OF")){
+                                        float quotient = num1 / num2;
+                                        System.out.println(quotient);
+                                    }
+                                    else if(temp.get(0).equals("MOD OF")){
+                                        float modulo = num1 % num2;
+                                        System.out.println(modulo);
+                                    }
+                                    else if(temp.get(0).equals("BOTH SAEM")){
                                         if(temp.get(3).equals("BIGGR OF")){
                                             if(num1 >= num2){
                                                 System.out.println("TRUE");
                                             }else{
                                                 System.out.println("FALSE");
                                             }
-                                        }else if(temp.get(3).equals("SMALLR OF")){
-                                            if(num1 <= num2){
+                                        }else{
+                                            if(num1 == num2){
                                                 System.out.println("TRUE");
                                             }else{
                                                 System.out.println("FALSE");
                                             }
+                                            
                                         }
-                                    } 
-                                    if(temp.get(0).equals("DIFFRINT")){
-                                        if(temp.get(3).equals("BIGGR OF")){
-                                            if(num1 < num2){
-                                                System.out.println("TRUE");
-                                            }else{
-                                                System.out.println("FALSE");
-                                            }
-                                        }else if(temp.get(3).equals("SMALLR OF")){
-                                            if(num1 > num2){
-                                                System.out.println("TRUE");
-                                            }else{
-                                                System.out.println("FALSE");
-                                            }
+                                    }
+                                    else if(temp.get(0).equals("DIFFRINT")){
+                                        if(num1 != num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
                                         }
-                                    } 
-
-                                }
-                                else if(for_sem_analysis.get(i).size() == 2){
-                                    if(temp.get(0).equals("VISIBLE")){
-                                        System.out.println(temp.get(1));
                                     }
                                 }
                             }
-                        }
-                        if (found == false){
-                            System.out.println(statements_array.get(i) + " Syntax Error");
-                            i = statements_array.size(); //break
+                            
+                            else if(for_sem_analysis.get(i).size() == 7){
+                                //System.out.println(temp);
+                                // get values
+                                if(var_map.containsKey(temp.get(4))){
+                                    num1 = Float.parseFloat(var_map.get(temp.get(4)));
+                                }else{
+                                    num1 = Float.parseFloat(temp.get(4));
+                                }
+                                if(var_map.containsKey(temp.get(6))){
+                                    num2 = Float.parseFloat(var_map.get(temp.get(6)));
+                                }else{
+                                    num2 = Float.parseFloat(temp.get(6));
+                                }
+
+                                if(temp.get(0).equals("BOTH SAEM")){
+                                    if(temp.get(3).equals("BIGGR OF")){
+                                        if(num1 >= num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }else if(temp.get(3).equals("SMALLR OF")){
+                                        if(num1 <= num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }
+                                } 
+                                if(temp.get(0).equals("DIFFRINT")){
+                                    if(temp.get(3).equals("BIGGR OF")){
+                                        if(num1 < num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }else if(temp.get(3).equals("SMALLR OF")){
+                                        if(num1 > num2){
+                                            System.out.println("TRUE");
+                                        }else{
+                                            System.out.println("FALSE");
+                                        }
+                                    }
+                                } 
+
+                            }
+                            
+                            else if(for_sem_analysis.get(i).size() == 2){
+                                if(temp.get(0).equals("I HAS A")){
+                                    var_map.put(temp.get(1),"0");
+                                }
+                                if(temp.get(0).equals("VISIBLE")){
+                                    if(var_map.containsKey(temp.get(1))){
+                                        System.out.println(var_map.get(temp.get(1)));
+                                    }else{
+                                        System.out.println(temp.get(1));
+                                    } 
+                                }
+                                if(temp.get(0).equals("GIMMEH")){
+                                    try (Scanner scanner_input = new Scanner(System.in)) {
+                                        System.out.println("TYPE SOMETHING AND ENTER");
+                                        String user_input = scanner_input.nextLine();
+                                        if(var_map.containsKey(temp.get(1))){
+                                            var_map.put(temp.get(1),user_input);
+                                        }else{
+                                            System.out.println("Can only be saved to a variable");
+                                        }
+                                    } 
+                                }
+
+
+
+                            }
+
+                            else if(for_sem_analysis.get(i).size() == 3){
+                                if(temp.get(1).equals("R")){
+                                    var_map.put(temp.get(0),temp.get(2));
+                                }
+                                
+                            }
                         }
                     }
+                    if (found == false){
+                        System.out.println(statements_array.get(i) + " Syntax Error");
+                        i = statements_array.size(); //break
+                    }
                 }
-            }else{
-                System.out.println(" Syntax Error");
             }
         }
 }
