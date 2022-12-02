@@ -546,7 +546,7 @@ public class SyntaxAnalyzer {
                 //remove spaces sa harap ng items sa statement array
                 statements_array = clean_statements_array(statements_array);
 
-                //System.out.println(statements_array);
+                System.out.println(statements_array);
 
                 // Checks if syntax is correct
                 //correct_syntax = check_correct_syntax(statements_array, grammar, correct_syntax);
@@ -567,7 +567,7 @@ public class SyntaxAnalyzer {
                                     var_map.put(temp.get(1),temp.get(3));
                                 }
                                 else if(temp.get(0).equals("SMOOSH")){
-                                    int temp_length = temp.size() - 2;
+                                    int temp_length = temp.size() / 2;
                                     int j = 0;
                                     int str_counter = 1;
                                     String build_string = "";
@@ -581,6 +581,7 @@ public class SyntaxAnalyzer {
                                         str_counter += 2;
                                         j += 1;
                                     }
+                                    build_string = "\"" + build_string + "\"";
                                     var_map.put(temp.get(1),build_string);
                                 }
                                 
