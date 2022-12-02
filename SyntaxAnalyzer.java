@@ -339,6 +339,14 @@ public class SyntaxAnalyzer {
         "|" + var.get("Variable").replaceAll("^.|.$", "") + 
         ")$");
 
+        grammar.put("String Concatenation","^SMOOSH (" 
+        + ".*" +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        ") AN ("
+        + ".*" +
+        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
+
         grammar.put("Input Statement","^GIMMEH " + var.get("Variable").replaceAll("^.|.$", "")+"$");
 
         grammar.put("Expression",grammar.get("Addition Exp").replaceAll("^.|.$", ""));
@@ -557,7 +565,26 @@ public class SyntaxAnalyzer {
                                 // if variable declaration -->  get value from variables
                                 if(temp.get(0).equals("I HAS A")){
                                     var_map.put(temp.get(1),temp.get(3));
-                                }else{
+                                }
+                                else if(temp.get(0).equals("SMOOSH")){
+                                    int temp_length = temp.size() - 2;
+                                    int j = 0;
+                                    int str_counter = 1;
+                                    String build_string = "";
+                                    while(j < temp_length){
+                                        if(pairs.get(temp.get(str_counter)).equals("Variable")){
+                                            String temp1 = var_map.get(temp.get(1)).replaceAll("\"", ""); 
+                                            build_string = build_string + temp1;
+                                        }else{
+                                            build_string = build_string + temp.get(str_counter).replaceAll("\"", ""); 
+                                        }
+                                        str_counter += 2;
+                                        j += 1;
+                                    }
+                                    var_map.put(temp.get(1),build_string);
+                                }
+                                
+                                else{
                                     // if not variable declaration might be an operation
                                     // check variable if it has a value
                                     if(var_map.containsKey(temp.get(1))){
