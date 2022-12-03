@@ -1,5 +1,4 @@
 HAI
-    I HAS A thing ITZ "String1"
-    SMOOSH thing AN "String2"
-    VISIBLE thing
+    SUM OF 5 AN 4
+    VISIBLE IT
 KTHXBYE

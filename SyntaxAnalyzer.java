@@ -427,6 +427,7 @@ public class SyntaxAnalyzer {
         HashMap<String, String> correct_syntax = new HashMap<String, String>(); 
         HashMap<Integer, ArrayList<String>> for_sem_analysis = new HashMap<Integer, ArrayList<String>>();
         HashMap<String, String> var_map = new HashMap<String, String>();
+        var_map.put("IT","0");
 
 
         // read file and store strings into array 
@@ -601,22 +602,27 @@ public class SyntaxAnalyzer {
 
                                     if(temp.get(0).equals("SUM OF")){
                                         float sum = num1 + num2;
-                                        System.out.println(sum);
+                                        var_map.put("IT",Float.toString(sum));
+                                        //System.out.println(var_map.get("IT"));
                                     }else if(temp.get(0).equals("DIFF OF")){
                                         float difference = num1 - num2;
-                                        System.out.println(difference);
+                                        var_map.put("IT",Float.toString(difference));
+                                        System.out.println(var_map.get("IT"));
                                     }
                                     else if(temp.get(0).equals("PRODUKT OF")){
                                         float product = num1 * num2;
-                                        System.out.println(product);
+                                        var_map.put("IT",Float.toString(product));
+                                        System.out.println(var_map.get("IT"));;
                                     }
                                     else if(temp.get(0).equals("QUOSHUNT OF")){
                                         float quotient = num1 / num2;
-                                        System.out.println(quotient);
+                                        var_map.put("IT",Float.toString(quotient));
+                                        System.out.println(var_map.get("IT"));
                                     }
                                     else if(temp.get(0).equals("MOD OF")){
                                         float modulo = num1 % num2;
-                                        System.out.println(modulo);
+                                        var_map.put("IT",Float.toString(modulo));
+                                        System.out.println(var_map.get("IT"));
                                     }
                                     else if(temp.get(0).equals("BOTH SAEM")){
                                         if(temp.get(3).equals("BIGGR OF")){
