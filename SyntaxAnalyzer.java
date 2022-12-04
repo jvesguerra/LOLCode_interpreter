@@ -171,13 +171,30 @@ public class SyntaxAnalyzer {
             return syntax_analyzer_run;
     }
     
-    static HashMap<String, String> grammar_map(HashMap<String, String> grammar, HashMap<String, String> map){
+    static HashMap<String, String> create_exp_map(HashMap<String, String> exp_map){
+        // local
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("Variable", "^[A-Za-z]+[A-Za-z0-9_]*$");
+        map.put("Number","^([+-]?\\d*\\.\\d*)$");
+
+        exp_map.put("Addition Exp","^(" 
+        + map.get("Number").replaceAll("^.|.$", "")+
+        "|" + map.get("Variable").replaceAll("^.|.$", "") + 
+        ") AN ("
+        + map.get("Number").replaceAll("^.|.$", "")+
+        "|" + map.get("Variable").replaceAll("^.|.$", "") + 
+        ")$");
+
+        return exp_map;
+    }
+    static HashMap<String, String> grammar_map(HashMap<String, String> grammar, HashMap<String, String> map,HashMap<String, String> exp_map){
         //grammar,get(key) ang result is value or yung regex
         //ginamit yung value ng ibang items sa grammar para iconcatenate sa printing,
         // {Printing=^VISIBLE -?\d+|VISIBLE [+-]?([0-9]+[.]){1}[0-9]|VISIBLE ".*"|VISIBLE WIN|FAIL$ <- value of Printing
         //str.replaceAll("^.|.$", ""), pwede gawin to remove ^ and $ sa strings
         HashMap<String, String> var = new HashMap<String, String>();
         var.put("Variable", "^[A-Za-z]+[A-Za-z0-9_]*$");
+        var.put("Number", "^[-+]?[0-9]*.?[0-9]+$");
         //String VARIABLE = "^[A-Za-z]+[A-Za-z0-9_]*$";
         grammar.put("NUMBR Literal", "^-?\\d+$");
         grammar.put("HAI", "^HAI$");
@@ -202,26 +219,26 @@ public class SyntaxAnalyzer {
 
 
         
+        // grammar.put("Addition","^SUM OF (" 
+        // + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
+        // + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
+        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        // ") AN ("
+        // + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
+        // + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
+        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        // ")$");
+
         grammar.put("Addition","^SUM OF (" 
-        + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        ") AN ("
-        + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        ")$");
+        + var.get("Number").replaceAll("^.|.$", "")+"|"
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") [AN ("
+        + var.get("Number").replaceAll("^.|.$", "") +"|" 
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")]+$");
+
         
-        grammar.put("Addition Exp","^(" 
-        + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        ") AN ("
-        + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        ")$");
-    
+
         grammar.put("Subtraction","^DIFF OF (" 
         + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
         + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
@@ -349,14 +366,15 @@ public class SyntaxAnalyzer {
 
         grammar.put("Input Statement","^GIMMEH " + var.get("Variable").replaceAll("^.|.$", "")+"$");
 
-        grammar.put("Expression",grammar.get("Addition Exp").replaceAll("^.|.$", ""));
+        grammar.put("Expression",exp_map.get("Addition Exp").replaceAll("^.|.$", ""));
         
         grammar.put("Assignment", var.get("Variable").replaceAll("^.|.$", "") +
         " R ("
-        + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
         + 
-        "|" + 
-        ")$");
+        grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")
+        + "|" +
+        grammar.get("Addition").replaceAll("^.|.$", "")
+        +  ")$");
         return grammar;
     }
     
@@ -422,13 +440,16 @@ public class SyntaxAnalyzer {
         ArrayList<String> statements_array = new ArrayList<>(); //new array
         // map to check for correct grammar
         HashMap<String, String> grammar = new HashMap<String, String>();
-        grammar = grammar_map(grammar,map);
+        
         // map to determine syntax errors
         HashMap<String, String> correct_syntax = new HashMap<String, String>(); 
         HashMap<Integer, ArrayList<String>> for_sem_analysis = new HashMap<Integer, ArrayList<String>>();
         HashMap<String, String> var_map = new HashMap<String, String>();
+        HashMap<String, String> exp_map = new HashMap<String, String>();
         var_map.put("IT","0");
-
+        exp_map = create_exp_map(exp_map);
+        grammar = grammar_map(grammar,map,exp_map);
+        
 
         // read file and store strings into array 
         try {                                      
@@ -562,6 +583,32 @@ public class SyntaxAnalyzer {
                             float num1;
                             float num2;
                             
+                            // Assignment Statements
+                            if(pairs.get(temp.get(0)).equals("Variable")){
+                                if(temp.get(1).equals("R")){
+                                    int temp_length = temp.size();
+                                    int counter = 3;
+                                    int op = 2;
+                                    float accum = 0;
+                                    float temp_num = 0;
+                                    while (counter != temp_length){
+                                        // get operation
+                                        if(pairs.get(temp.get(op)).equals("Addition Operator")){
+                                            System.out.println(temp.get(counter));
+                                            temp_num = Float.parseFloat(temp.get(counter));
+                                            accum = temp_num + accum;
+                                        }
+                                        if(counter == temp_length-1){
+                                            counter++;
+                                        }else{
+                                            counter = counter + 2;
+                                        }    
+                                    }
+
+                                    var_map.put(temp.get(0),Float.toString(accum));
+                                }
+                            }
+
                             if (for_sem_analysis.get(i).size() == 4){
                                 // if variable declaration -->  get value from variables
                                 if(temp.get(0).equals("I HAS A")){
