@@ -1,0 +1,10 @@
+HAI
+    I HAS A temp ITZ 3.14
+    VISIBLE temp
+    I HAS A temp2
+    I HAS A thing ITZ SUM OF 4 AN 3
+    VISIBLE thing
+    I HAS A temp3
+    GIMMEH temp3
+    VISIBLE temp3
+KTHXBYE

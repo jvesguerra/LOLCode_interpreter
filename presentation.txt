@@ -1,5 +1,4 @@
 HAI
-    I HAS A thing
-    thing R SUM OF 3.1 AN 4 AN 2.9
+    I HAS A thing ITZ SUM OF 4 AN 3
     VISIBLE thing
 KTHXBYE

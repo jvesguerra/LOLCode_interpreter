@@ -32,17 +32,17 @@ public class SyntaxAnalyzer {
         map.put("^PRODUKT OF$", "Multiplication Operator");
         map.put("^QUOSHUNT OF$", "Division Operator");
         map.put("^MOD OF$", "Modulo Operator");
-        map.put("^BIGGR OF$", "Comparison Operator");
-        map.put("^SMALLR OF$", "Comparison Operator");
+        map.put("^BIGGR OF$", "max");
+        map.put("^SMALLR OF$", "min");
         map.put("^BOTH OF$", "AND Boolean Operator");
         map.put("^EITHER OF$", "OR Boolean Operator");
         map.put("^WON OF$", "XOR Boolean Operator");
         map.put("^NOT$", "NOT Boolean Operator");
         map.put("^ANY OF$", "Infinite Arity OR Operator");
         map.put("^ALL OF$", "Infinite Arity AND Operator");
-        map.put("^SAEM$", "Comparison Operator");
+        //map.put("^SAEM$", "Comparison Operator");
         map.put("^BOTH SAEM$", "== Comparison Operator");
-        map.put("^DIFFRINT$", "> or < Comparison Operator");
+        map.put("^DIFFRINT$", "!= Comparison Operator");
         map.put("^SMOOSH$", "Concatenation Operator");
         map.put("^MAEK$", "Variable typecasting");
         map.put("^IS NOW A$", "Variable typecasting");
@@ -140,7 +140,7 @@ public class SyntaxAnalyzer {
                     char ch = final_tokens.get(i).charAt(0);   
                     if(Character.isAlphabetic(ch)){ 
                         if(final_tokens.get(i-1).equals("I HAS A")){
-                            if(Pattern.matches("^[A-Za-z]+[A-Za-z0-9_]*$",final_tokens.get(i))){
+                            if(Pattern.matches("^[a-z]+[A-Za-z0-9_]*$",final_tokens.get(i))){
                                 pairs.put(final_tokens.get(i),"Variable"); //put into 'pairs' hashmap
                             }
                             
@@ -193,8 +193,10 @@ public class SyntaxAnalyzer {
         // {Printing=^VISIBLE -?\d+|VISIBLE [+-]?([0-9]+[.]){1}[0-9]|VISIBLE ".*"|VISIBLE WIN|FAIL$ <- value of Printing
         //str.replaceAll("^.|.$", ""), pwede gawin to remove ^ and $ sa strings
         HashMap<String, String> var = new HashMap<String, String>();
-        var.put("Variable", "^[A-Za-z]+[A-Za-z0-9_]*$");
-        var.put("Number", "^[-+]?[0-9]*.?[0-9]+$");
+        var.put("Variable", "^[a-z]+[A-Za-z0-9_]*$");
+        var.put("Variable IT", "^[A-Za-z]+[A-Za-z0-9_]*$");
+        //var.put("Number", "^[-+]?[0-9]*.?[0-9]+$");
+        var.put("Number", "^[\"]?[-+]?[0-9]*.?[0-9]+[\"]?$");
         //String VARIABLE = "^[A-Za-z]+[A-Za-z0-9_]*$";
         grammar.put("NUMBR Literal", "^-?\\d+$");
         grammar.put("HAI", "^HAI$");
@@ -213,12 +215,51 @@ public class SyntaxAnalyzer {
             + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|" //.substring removes ^ and $ from the strings
             + grammar.get("YARN Literal").substring( 1,  grammar.get("YARN Literal").length()-1)+"|"
             + grammar.get("TROOF Literal").substring( 1,  grammar.get("TROOF Literal").length()-1) +"|"
+            + var.get("Variable IT").replaceAll("^.|.$", "") +"|"
+            + ".*" +"|"
             + var.get("Variable").replaceAll("^.|.$", "")
             +")$");
 
+        grammar.put("Addition","^SUM OF (" 
+        + var.get("Number").replaceAll("^.|.$", "")+"|"
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") [AN ("
+        + var.get("Number").replaceAll("^.|.$", "") +"|" 
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")]+$");
 
+        grammar.put("Subtraction","^DIFF OF (" 
+        + var.get("Number").replaceAll("^.|.$", "")+"|"
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") [AN ("
+        + var.get("Number").replaceAll("^.|.$", "") +"|" 
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")]+$");
 
-        
+        grammar.put("Multiplication","^PRODUKT OF (" 
+        + var.get("Number").replaceAll("^.|.$", "")+"|"
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") [AN ("
+        + var.get("Number").replaceAll("^.|.$", "") +"|" 
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")]+$");
+
+        grammar.put("Division","^QUOSHUNT OF (" 
+        + var.get("Number").replaceAll("^.|.$", "")+"|"
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") [AN ("
+        + var.get("Number").replaceAll("^.|.$", "") +"|" 
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")]+$");
+
+        grammar.put("Mod","^MOD OF (" 
+        + var.get("Number").replaceAll("^.|.$", "")+"|"
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") [AN ("
+        + var.get("Number").replaceAll("^.|.$", "") +"|" 
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")]+$");
+
         // grammar.put("Addition","^SUM OF (" 
         // + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
         // + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
@@ -229,55 +270,45 @@ public class SyntaxAnalyzer {
         // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
         // ")$");
 
-        grammar.put("Addition","^SUM OF (" 
-        + var.get("Number").replaceAll("^.|.$", "")+"|"
-        + var.get("Variable").replaceAll("^.|.$", "") + 
-        ") [AN ("
-        + var.get("Number").replaceAll("^.|.$", "") +"|" 
-        + var.get("Variable").replaceAll("^.|.$", "") + 
-        ")]+$");
+        // grammar.put("Subtraction","^DIFF OF (" 
+        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        // "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        // ") AN ("
+        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        // ")$");
 
-        
+        // grammar.put("Multiplication","^PRODUKT OF (" 
+        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        // "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        // ") AN ("
+        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        // ")$");
 
-        grammar.put("Subtraction","^DIFF OF (" 
-        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") +
-        ") AN ("
-        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        ")$");
+        // grammar.put("Division","^QUOSHUNT OF (" 
+        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        // "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        // ") AN ("
+        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        // ")$");
 
-        grammar.put("Multiplication","^PRODUKT OF (" 
-        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") +
-        ") AN ("
-        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        ")$");
-
-        grammar.put("Division","^QUOSHUNT OF (" 
-        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") +
-        ") AN ("
-        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        ")$");
-
-        grammar.put("Mod","^MOD OF (" 
-        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") +
-        ") AN ("
-        + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        ")$");
+        // grammar.put("Mod","^MOD OF (" 
+        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        // "|" + var.get("Variable").replaceAll("^.|.$", "") +
+        // ") AN ("
+        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
+        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
+        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
+        // ")$");
         
         //COMPARISON OPERATIONS
         grammar.put("Both saem","^BOTH SAEM (" 
@@ -370,11 +401,21 @@ public class SyntaxAnalyzer {
         
         grammar.put("Assignment", var.get("Variable").replaceAll("^.|.$", "") +
         " R ("
-        + 
-        grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")
-        + "|" +
-        grammar.get("Addition").replaceAll("^.|.$", "")
+        + grammar.get("Subtraction").replaceAll("^.|.$", "") + "|" 
+        + grammar.get("Multiplication").replaceAll("^.|.$", "") + "|" 
+        + grammar.get("Division").replaceAll("^.|.$", "") + "|" 
+        + grammar.get("Mod").replaceAll("^.|.$", "") + "|" 
+        + grammar.get("Addition").replaceAll("^.|.$", "")
         +  ")$");
+
+        grammar.put("Variable Initialization Expression", "^I HAS A [A-Za-z]+[A-Za-z0-9_]* ITZ ("
+        + grammar.get("Subtraction").replaceAll("^.|.$", "") + "|" 
+        + grammar.get("Multiplication").replaceAll("^.|.$", "") + "|" 
+        + grammar.get("Division").replaceAll("^.|.$", "") + "|" 
+        + grammar.get("Mod").replaceAll("^.|.$", "") + "|" 
+        + grammar.get("Addition").replaceAll("^.|.$", "")
+        + ")$");
+
         return grammar;
     }
     
@@ -453,7 +494,7 @@ public class SyntaxAnalyzer {
 
         // read file and store strings into array 
         try {                                      
-        File file = new File("presentation.txt");
+        File file = new File("comparison.txt");
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
             String data = scanner.nextLine();
@@ -539,7 +580,7 @@ public class SyntaxAnalyzer {
 
         System.out.println(pairs);
         // DECLARATIONS
-        int run = run_syntax_analyzer(pairs);
+        //int run = run_syntax_analyzer(pairs);
         int tokens_syntax_size = tokens_syntax.size()-2;  // -2 since last data is KTHNXBYE, ~newline~  
 
         if(tokens_syntax.get(0).equals("HAI") || tokens_syntax.get(tokens_syntax_size).equals("KTHXBYE")){
@@ -582,203 +623,264 @@ public class SyntaxAnalyzer {
 
                             float num1;
                             float num2;
-                            
+
+                            // Variable declaration
+                            if(pairs.get(temp.get(0)).equals("Variable declaration")){
+                                // I HAS A thing ITZ 5
+                                if (for_sem_analysis.get(i).size() ==4){
+                                    var_map.put(temp.get(1),temp.get(3));
+                                }
+                                // I HAS A thing
+                                if (for_sem_analysis.get(i).size() == 2){
+                                    var_map.put(temp.get(1),"0");
+                                }
+                                
+                            }
+
+                            // bypass Assignment statements
+                            int op_bypass = 0;
+                            int save_to_it = 0;
+                            if(pairs.get(temp.get(0)).equals("Addition Operator") || pairs.get(temp.get(0)).equals("Subtraction Operator") || pairs.get(temp.get(0)).equals("Multiplication Operator") || pairs.get(temp.get(0)).equals("Division Operator") || pairs.get(temp.get(0)).equals("Modulo Operator")){
+                                op_bypass = 1;
+                                save_to_it = 1;
+                            }
+
+                            if(set.getKey().equals("Variable Initialization Expression")){
+                                op_bypass = 1;
+                                save_to_it = 2;
+                            }
+
                             // Assignment Statements
-                            if(pairs.get(temp.get(0)).equals("Variable")){
-                                if(temp.get(1).equals("R")){
-                                    int temp_length = temp.size();
-                                    int counter = 3;
-                                    int op = 2;
+                            if(pairs.get(temp.get(0)).equals("Variable") || op_bypass == 1){
+                                if(temp.get(1).equals("R") || op_bypass == 1){
+                                    int counter = 0, op = 0;
+                                    // If VARIABLE R SUM OF 5 AN 6
+                                    if(save_to_it == 0){
+                                        counter = 3;        // start of the number
+                                        op = 2;             // index of operation
+                                    // IF SUM OF 5 AN 6
+                                    }else if (save_to_it == 1){
+                                        counter = 1;
+                                        op = 0;
+                                    }
+                                    else if (save_to_it == 2){
+                                        counter = 4;
+                                        op = 3;
+                                    }
+                                    
+                                    int temp_length = temp.size();       
                                     float accum = 0;
                                     float temp_num = 0;
+
                                     while (counter != temp_length){
-                                        // get operation
-                                        if(pairs.get(temp.get(op)).equals("Addition Operator")){
-                                            System.out.println(temp.get(counter));
+                                        if(var_map.containsKey(temp.get(counter))){
+                                            temp_num = Float.parseFloat(var_map.get(temp.get(counter)));
+                                        }else{
                                             temp_num = Float.parseFloat(temp.get(counter));
+                                        }
+                                        // ADDITION
+                                        if(pairs.get(temp.get(op)).equals("Addition Operator")){
                                             accum = temp_num + accum;
                                         }
+   
+                                        // SUBTRACTION
+                                        if(pairs.get(temp.get(op)).equals("Subtraction Operator")){
+                                            // sets the first number to be subtracted to
+                                            if(accum == 0){
+                                                accum = Float.parseFloat(temp.get(counter));
+                                                
+                                            }else{
+                                                temp_num = Float.parseFloat(temp.get(counter));
+                                                accum = accum - temp_num;
+                                            }
+                                        }
+
+                                        // MULTIPLICATION
+                                        float product;
+                                        if(pairs.get(temp.get(op)).equals("Multiplication Operator")){
+                                            temp_num = Float.parseFloat(temp.get(counter));
+                                            if(accum == 0){
+                                                product = 0;
+                                                accum = 1;
+                                                accum = accum * temp_num;
+                                            }else{
+                                                product = accum * temp_num;
+                                                accum = product;
+                                            }
+
+                                        }
+
+                                        float quotient;
+                                        if(pairs.get(temp.get(op)).equals("Division Operator")){
+                                            temp_num = Float.parseFloat(temp.get(counter));
+                                            if(accum == 0){
+                                                accum = temp_num;
+                                            }else{
+                                                quotient = accum / temp_num;
+                                                accum = quotient;
+                                            }
+                                        }
+
+                                        float mod;
+                                        if(pairs.get(temp.get(op)).equals("Modulo Operator")){
+                                            temp_num = Float.parseFloat(temp.get(counter));
+                                            if(accum == 0){
+                                                accum = temp_num;
+                                            }else{
+                                                mod = accum % temp_num;
+                                                accum = mod;
+                                            }
+                                        }
+
                                         if(counter == temp_length-1){
                                             counter++;
                                         }else{
                                             counter = counter + 2;
-                                        }    
+                                        }  
                                     }
-
-                                    var_map.put(temp.get(0),Float.toString(accum));
+                                    // SAVE TO VARIABLE
+                                    if(save_to_it == 0){
+                                        var_map.put(temp.get(0),Float.toString(accum));
+                                    // SAVE TO IT
+                                    }
+                                    else if (save_to_it == 1){
+                                        var_map.put("IT",Float.toString(accum));
+                                    }
+                                    else if (save_to_it == 2){
+                                        var_map.put(temp.get(1),Float.toString(accum));
+                                    }
+                                    
                                 }
                             }
 
-                            if (for_sem_analysis.get(i).size() == 4){
-                                // if variable declaration -->  get value from variables
-                                if(temp.get(0).equals("I HAS A")){
-                                    var_map.put(temp.get(1),temp.get(3));
+                            // R
+                            if (for_sem_analysis.get(i).size() == 3){
+                                if(pairs.get(temp.get(1)).equals("Assignment operation")){
+                                    var_map.put(temp.get(0),temp.get(2));
                                 }
-                                else if(temp.get(0).equals("SMOOSH")){
-                                    int temp_length = temp.size() / 2;
-                                    int j = 0;
-                                    int str_counter = 1;
-                                    String build_string = "";
-                                    while(j < temp_length){
-                                        if(pairs.get(temp.get(str_counter)).equals("Variable")){
-                                            String temp1 = var_map.get(temp.get(1)).replaceAll("\"", ""); 
-                                            build_string = build_string + temp1;
-                                        }else{
-                                            build_string = build_string + temp.get(str_counter).replaceAll("\"", ""); 
-                                        }
-                                        str_counter += 2;
-                                        j += 1;
-                                    }
-                                    build_string = "\"" + build_string + "\"";
-                                    var_map.put(temp.get(1),build_string);
-                                }
-                                
-                                else{
-                                    // if not variable declaration might be an operation
-                                    // check variable if it has a value
+                            }
+
+                            // GIMMEH
+                            if(pairs.get(temp.get(0)).equals("Stores a string input to a variable")){
+                                try (Scanner scanner_input = new Scanner(System.in)) {
+                                    System.out.println("TYPE SOMETHING AND ENTER");
+                                    String user_input = scanner_input.nextLine();
                                     if(var_map.containsKey(temp.get(1))){
-                                        num1 = Float.parseFloat(var_map.get(temp.get(1)));
+                                        var_map.put(temp.get(1),user_input);
                                     }else{
-                                        num1 = Float.parseFloat(temp.get(1));
-                                    }
-                                    if(var_map.containsKey(temp.get(3))){
-                                        num2 = Float.parseFloat(var_map.get(temp.get(3)));
-                                    }else{
-                                        num2 = Float.parseFloat(temp.get(3));
-                                    }
-
-                                    if(temp.get(0).equals("SUM OF")){
-                                        float sum = num1 + num2;
-                                        var_map.put("IT",Float.toString(sum));
-                                        //System.out.println(var_map.get("IT"));
-                                    }else if(temp.get(0).equals("DIFF OF")){
-                                        float difference = num1 - num2;
-                                        var_map.put("IT",Float.toString(difference));
-                                        System.out.println(var_map.get("IT"));
-                                    }
-                                    else if(temp.get(0).equals("PRODUKT OF")){
-                                        float product = num1 * num2;
-                                        var_map.put("IT",Float.toString(product));
-                                        System.out.println(var_map.get("IT"));;
-                                    }
-                                    else if(temp.get(0).equals("QUOSHUNT OF")){
-                                        float quotient = num1 / num2;
-                                        var_map.put("IT",Float.toString(quotient));
-                                        System.out.println(var_map.get("IT"));
-                                    }
-                                    else if(temp.get(0).equals("MOD OF")){
-                                        float modulo = num1 % num2;
-                                        var_map.put("IT",Float.toString(modulo));
-                                        System.out.println(var_map.get("IT"));
-                                    }
-                                    else if(temp.get(0).equals("BOTH SAEM")){
-                                        if(temp.get(3).equals("BIGGR OF")){
-                                            if(num1 >= num2){
-                                                System.out.println("TRUE");
-                                            }else{
-                                                System.out.println("FALSE");
-                                            }
-                                        }else{
-                                            if(num1 == num2){
-                                                System.out.println("TRUE");
-                                            }else{
-                                                System.out.println("FALSE");
-                                            }
-                                            
-                                        }
-                                    }
-                                    else if(temp.get(0).equals("DIFFRINT")){
-                                        if(num1 != num2){
-                                            System.out.println("TRUE");
-                                        }else{
-                                            System.out.println("FALSE");
-                                        }
-                                    }
-                                }
-                            }
-                            
-                            else if(for_sem_analysis.get(i).size() == 7){
-                                //System.out.println(temp);
-                                // get values
-                                if(var_map.containsKey(temp.get(4))){
-                                    num1 = Float.parseFloat(var_map.get(temp.get(4)));
-                                }else{
-                                    num1 = Float.parseFloat(temp.get(4));
-                                }
-                                if(var_map.containsKey(temp.get(6))){
-                                    num2 = Float.parseFloat(var_map.get(temp.get(6)));
-                                }else{
-                                    num2 = Float.parseFloat(temp.get(6));
-                                }
-
-                                if(temp.get(0).equals("BOTH SAEM")){
-                                    if(temp.get(3).equals("BIGGR OF")){
-                                        if(num1 >= num2){
-                                            System.out.println("TRUE");
-                                        }else{
-                                            System.out.println("FALSE");
-                                        }
-                                    }else if(temp.get(3).equals("SMALLR OF")){
-                                        if(num1 <= num2){
-                                            System.out.println("TRUE");
-                                        }else{
-                                            System.out.println("FALSE");
-                                        }
+                                        System.out.println("Can only be saved to a variable");
                                     }
                                 } 
-                                if(temp.get(0).equals("DIFFRINT")){
-                                    if(temp.get(3).equals("BIGGR OF")){
-                                        if(num1 < num2){
-                                            System.out.println("TRUE");
-                                        }else{
-                                            System.out.println("FALSE");
-                                        }
-                                    }else if(temp.get(3).equals("SMALLR OF")){
-                                        if(num1 > num2){
-                                            System.out.println("TRUE");
-                                        }else{
-                                            System.out.println("FALSE");
-                                        }
-                                    }
-                                } 
-
                             }
-                            
-                            else if(for_sem_analysis.get(i).size() == 2){
-                                if(temp.get(0).equals("I HAS A")){
-                                    var_map.put(temp.get(1),"0");
-                                }
-                                if(temp.get(0).equals("VISIBLE")){
+
+                            // VISIBLE
+                            if(pairs.get(temp.get(0)).equals("Used for printing a statement")){
+                                String print_statement = "";
+                                if(temp.size() > 2){
+                                    for(int loop_print = 0; loop_print < temp.size(); loop_print+=1){
+                                        print_statement = print_statement + temp.get(loop_print) + " ";
+                                    }
+                                    System.out.println(print_statement);
+                                }else{
                                     if(var_map.containsKey(temp.get(1))){
                                         System.out.println(var_map.get(temp.get(1)));
                                     }else{
                                         System.out.println(temp.get(1));
                                     } 
                                 }
-                                if(temp.get(0).equals("GIMMEH")){
-                                    try (Scanner scanner_input = new Scanner(System.in)) {
-                                        System.out.println("TYPE SOMETHING AND ENTER");
-                                        String user_input = scanner_input.nextLine();
-                                        if(var_map.containsKey(temp.get(1))){
-                                            var_map.put(temp.get(1),user_input);
-                                        }else{
-                                            System.out.println("Can only be saved to a variable");
-                                        }
-                                    } 
-                                }
-
-
 
                             }
 
-                            else if(for_sem_analysis.get(i).size() == 3){
-                                if(temp.get(1).equals("R")){
-                                    var_map.put(temp.get(0),temp.get(2));
+                            // SMOOSH
+                            if(pairs.get(temp.get(0)).equals("Concatenation Operator")){
+                                int temp_length = temp.size() / 2;
+                                int j = 0;
+                                int str_counter = 1;
+                                String build_string = "";
+                                while(j < temp_length){
+                                    if(pairs.get(temp.get(str_counter)).equals("Variable")){
+                                        String temp1 = var_map.get(temp.get(1)).replaceAll("\"", ""); 
+                                        build_string = build_string + temp1;
+                                    }else{
+                                        build_string = build_string + temp.get(str_counter).replaceAll("\"", ""); 
+                                    }
+                                    str_counter += 2;
+                                    j += 1;
                                 }
-                                
+                                build_string = "\"" + build_string + "\"";
+                                var_map.put(temp.get(1),build_string);
+                            }
+
+
+                            // COMPARISON OPERATIONS
+                            
+                            float arg1 = 0;
+                            float arg2 = 0;
+
+                            // BOTH SAEM
+                            if(pairs.get(temp.get(0)).equals("== Comparison Operator")){
+                                arg1 = Float.parseFloat(temp.get(1));
+                                // BIGGR
+                                if(pairs.get(temp.get(3)).equals("max")){
+                                    arg2 = Float.parseFloat(temp.get(6));
+                                    if(arg1 >= arg2){
+                                        System.out.println("TRUE");
+                                    }else{
+                                        System.out.println("FALSE");
+                                    }
+                                }
+                                // SMALLR
+                                else if(pairs.get(temp.get(3)).equals("min")){
+                                    arg2 = Float.parseFloat(temp.get(6));
+                                    if(arg1 <= arg2){
+                                        System.out.println("TRUE");
+                                    }else{
+                                        System.out.println("FALSE");
+                                    }
+                                }
+                                else{
+                                    arg2 = Float.parseFloat(temp.get(3));
+                                    if(arg1 == arg2){
+                                        System.out.println("TRUE");
+                                    }else{
+                                        System.out.println("FALSE");
+                                    }
+                                }
+                            }
+
+                            // DIFFRINT
+                            if(pairs.get(temp.get(0)).equals("!= Comparison Operator")){
+                                arg1 = Float.parseFloat(temp.get(1));
+                                // BIGGR
+                                if(pairs.get(temp.get(3)).equals("max")){
+                                    arg2 = Float.parseFloat(temp.get(6));
+                                    if(arg1 < arg2){
+                                        System.out.println("TRUE");
+                                    }else{
+                                        System.out.println("FALSE");
+                                    }
+                                }
+                                // SMALLR
+                                else if(pairs.get(temp.get(3)).equals("min")){
+                                    arg2 = Float.parseFloat(temp.get(6));
+                                    if(arg1 > arg2){
+                                        System.out.println("TRUE");
+                                    }else{
+                                        System.out.println("FALSE");
+                                    }
+                                }
+                                else{
+                                    arg2 = Float.parseFloat(temp.get(3));
+                                    if(arg1 != arg2){
+                                        System.out.println("TRUE");
+                                    }else{
+                                        System.out.println("FALSE");
+                                    }
+                                }
                             }
                         }
                     }
+
                     if (found == false){
                         System.out.println(statements_array.get(i) + " Syntax Error");
                         i = statements_array.size(); //break

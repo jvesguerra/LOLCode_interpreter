@@ -1,0 +1,13 @@
+HAI
+    I HAS A temp3 ITZ 4
+    SUM OF temp3 AN 5
+    VISIBLE IT
+    I HAS A temp4
+    GIMMEH temp4
+    SUM OF temp4 AN 5 AN temp3
+    VISIBLE IT
+    I HAS A expr ITZ SUM OF 1 AN 1
+    VISIBLE expr
+    VISIBLE SUM OF 6 AN 7
+    VISIBLE IT
+KTHXBYE
