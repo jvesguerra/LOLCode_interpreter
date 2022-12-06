@@ -50,12 +50,12 @@ public class SyntaxAnalyzer {
         
         map.put("^VISIBLE$", "Used for printing a statement");
         map.put("^GIMMEH$", "Stores a string input to a variable");
-        map.put("^O RLY$", "Start of If-Then statement");
+        map.put("^O RLY[?]$", "Start of If-Then statement");
         map.put("^YA RLY$", "If Statement");
         map.put("^MEBBE$", "Else-If Statement");
         map.put("^NO WAI$", "Else Statement");
         map.put("^OIC$", "End of If-Else and Switch-Case Statement");
-        map.put("^WTF?$", "Start of Switch-Case");
+        map.put("^WTF[?]$", "Start of Switch-Case");
         map.put("^OMG$", "Switch-Case Statement");
         map.put("^OMGWTF$", "Switch-Case Default Statement");
         map.put("^IM IN YR$", "Start of loop");
@@ -113,9 +113,9 @@ public class SyntaxAnalyzer {
                     t = t + 2;  // update loop
                 }
             // operations
-            }else if(tokens.get(t).equals("SUM") || tokens.get(t).equals("DIFF") || tokens.get(t).equals("PRODUKT") || tokens.get(t).equals("QUOSHUNT") || tokens.get(t).equals("MOD") || tokens.get(t).equals("BIGGR") || tokens.get(t).equals("SMALLR") || tokens.get(t).equals("BOTH") || tokens.get(t).equals("EITHER") || tokens.get(t).equals("WON") || tokens.get(t).equals("ANY") || tokens.get(t).equals("ALL")){
+            }else if(tokens.get(t).equals("SUM") || tokens.get(t).equals("DIFF") || tokens.get(t).equals("PRODUKT") || tokens.get(t).equals("QUOSHUNT") || tokens.get(t).equals("MOD") || tokens.get(t).equals("BIGGR") || tokens.get(t).equals("SMALLR") || tokens.get(t).equals("BOTH") || tokens.get(t).equals("EITHER") || tokens.get(t).equals("WON") || tokens.get(t).equals("ANY") || tokens.get(t).equals("ALL") || tokens.get(t).equals("O") || tokens.get(t).equals("YA") || tokens.get(t).equals("NO")){
                 build_token = tokens.get(t) + " " + tokens.get(t+1);
-                if(build_token.equals("SUM OF") || build_token.equals("DIFF OF") || build_token.equals("PRODUKT OF") || build_token.equals("QUOSHUNT OF") || build_token.equals("MOD OF") || build_token.equals("BIGGR OF") || build_token.equals("SMALLR OF") || build_token.equals("BOTH OF") || build_token.equals("EITHER OF") || build_token.equals("WON OF") || build_token.equals("ANY OF") || build_token.equals("ALL OF") || build_token.equals("BOTH SAEM")){
+                if(build_token.equals("SUM OF") || build_token.equals("DIFF OF") || build_token.equals("PRODUKT OF") || build_token.equals("QUOSHUNT OF") || build_token.equals("MOD OF") || build_token.equals("BIGGR OF") || build_token.equals("SMALLR OF") || build_token.equals("BOTH OF") || build_token.equals("EITHER OF") || build_token.equals("WON OF") || build_token.equals("ANY OF") || build_token.equals("ALL OF") || build_token.equals("BOTH SAEM") || build_token.equals("O RLY?") || build_token.equals("YA RLY") || build_token.equals("NO WAI")){
                     final_tokens.add(build_token);
                     t = t + 1;  // update loop
                 }
@@ -198,6 +198,15 @@ public class SyntaxAnalyzer {
         //var.put("Number", "^[-+]?[0-9]*.?[0-9]+$");
         var.put("Number", "^[\"]?[-+]?[0-9]*.?[0-9]+[\"]?$");
         //String VARIABLE = "^[A-Za-z]+[A-Za-z0-9_]*$";
+
+        // if else
+        grammar.put("Start of If-Then statement", "^O RLY[?]$");
+        grammar.put("If Statement", "^YA RLY$");
+        grammar.put("Else Statement", "^NO WAI$");
+        grammar.put("End of If-Else and Switch-Case Statement", "^OIC$");
+        grammar.put("Else-If Statement", "^MEBBE$");
+
+
         grammar.put("NUMBR Literal", "^-?\\d+$");
         grammar.put("HAI", "^HAI$");
         grammar.put("KTHXBYE", "^KTHXBYE$");
@@ -259,56 +268,6 @@ public class SyntaxAnalyzer {
         + var.get("Number").replaceAll("^.|.$", "") +"|" 
         + var.get("Variable").replaceAll("^.|.$", "") + 
         ")]+$");
-
-        // grammar.put("Addition","^SUM OF (" 
-        // + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        // + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
-        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        // ") AN ("
-        // + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "")+"|"
-        // + grammar.get("NUMBR Literal").replaceAll("^.|.$", "") +
-        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        // ")$");
-
-        // grammar.put("Subtraction","^DIFF OF (" 
-        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        // "|" + var.get("Variable").replaceAll("^.|.$", "") +
-        // ") AN ("
-        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        // ")$");
-
-        // grammar.put("Multiplication","^PRODUKT OF (" 
-        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        // "|" + var.get("Variable").replaceAll("^.|.$", "") +
-        // ") AN ("
-        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        // ")$");
-
-        // grammar.put("Division","^QUOSHUNT OF (" 
-        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        // "|" + var.get("Variable").replaceAll("^.|.$", "") +
-        // ") AN ("
-        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        // ")$");
-
-        // grammar.put("Mod","^MOD OF (" 
-        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        // "|" + var.get("Variable").replaceAll("^.|.$", "") +
-        // ") AN ("
-        // + grammar.get("NUMBAR Literal").substring( 1,  grammar.get("NUMBAR Literal").length()-1)+"|"
-        // + grammar.get("NUMBR Literal").substring( 1,  grammar.get("NUMBR Literal").length()-1) +
-        // "|" + var.get("Variable").replaceAll("^.|.$", "") + 
-        // ")$");
         
         //COMPARISON OPERATIONS
         grammar.put("Both saem","^BOTH SAEM (" 
@@ -438,9 +397,9 @@ public class SyntaxAnalyzer {
                         }
                     // operations
                     }
-                    else if(tokens_syntax.get(t).equals("SUM") || tokens_syntax.get(t).equals("DIFF") || tokens_syntax.get(t).equals("PRODUKT") || tokens_syntax.get(t).equals("QUOSHUNT") || tokens_syntax.get(t).equals("MOD") || tokens_syntax.get(t).equals("BIGGR") || tokens_syntax.get(t).equals("SMALLR") || tokens_syntax.get(t).equals("BOTH") || tokens_syntax.get(t).equals("EITHER") || tokens_syntax.get(t).equals("WON") || tokens_syntax.get(t).equals("ANY") || tokens_syntax.get(t).equals("ALL")){
+                    else if(tokens_syntax.get(t).equals("SUM") || tokens_syntax.get(t).equals("DIFF") || tokens_syntax.get(t).equals("PRODUKT") || tokens_syntax.get(t).equals("QUOSHUNT") || tokens_syntax.get(t).equals("MOD") || tokens_syntax.get(t).equals("BIGGR") || tokens_syntax.get(t).equals("SMALLR") || tokens_syntax.get(t).equals("BOTH") || tokens_syntax.get(t).equals("EITHER") || tokens_syntax.get(t).equals("WON") || tokens_syntax.get(t).equals("ANY") || tokens_syntax.get(t).equals("ALL") || tokens_syntax.get(t).equals("O") || tokens_syntax.get(t).equals("YA") || tokens_syntax.get(t).equals("NO")){
                         bs_token = tokens_syntax.get(t) + " " + tokens_syntax.get(t+1);
-                        if(bs_token.equals("SUM OF") || bs_token.equals("DIFF OF") || bs_token.equals("PRODUKT OF") || bs_token.equals("QUOSHUNT OF") || bs_token.equals("MOD OF") || bs_token.equals("BIGGR OF") || bs_token.equals("SMALLR OF") || bs_token.equals("BOTH OF") || bs_token.equals("BOTH SAEM")|| bs_token.equals("EITHER OF") || bs_token.equals("WON OF") || bs_token.equals("ANY OF") || bs_token.equals("ALL OF")){
+                        if(bs_token.equals("SUM OF") || bs_token.equals("DIFF OF") || bs_token.equals("PRODUKT OF") || bs_token.equals("QUOSHUNT OF") || bs_token.equals("MOD OF") || bs_token.equals("BIGGR OF") || bs_token.equals("SMALLR OF") || bs_token.equals("BOTH OF") || bs_token.equals("BOTH SAEM")|| bs_token.equals("EITHER OF") || bs_token.equals("WON OF") || bs_token.equals("ANY OF") || bs_token.equals("ALL OF") || bs_token.equals("O RLY?") || bs_token.equals("YA RLY") || bs_token.equals("NO WAI")){
                             final_syntax_tokens.add(bs_token);
                             t = t + 1;  // update loop
                         }
@@ -494,7 +453,7 @@ public class SyntaxAnalyzer {
 
         // read file and store strings into array 
         try {                                      
-        File file = new File("comparison.txt");
+        File file = new File("presentation.txt"); //file name
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
             String data = scanner.nextLine();
@@ -586,6 +545,7 @@ public class SyntaxAnalyzer {
         if(tokens_syntax.get(0).equals("HAI") || tokens_syntax.get(tokens_syntax_size).equals("KTHXBYE")){
                 // BUILD FINAL SYNTAX TOKENS
                 final_syntax_tokens = get_final_syntax_tokens(tokens_syntax, final_syntax_tokens, tokens_syntax_size);
+                System.out.println(final_syntax_tokens);
 
                 // build hashmap for semantic analysis
                 int op_counter = 0;
@@ -613,6 +573,10 @@ public class SyntaxAnalyzer {
 
                 // Checks if syntax is correct
                 //correct_syntax = check_correct_syntax(statements_array, grammar, correct_syntax);
+
+                int run_ie = 0;
+                int oic_index = 0;
+                int next_index = 0;
                 for(int i = 0; i < statements_array.size(); i++){
                     boolean found = false;
                     for (HashMap.Entry<String, String> set:grammar.entrySet()){
@@ -621,8 +585,42 @@ public class SyntaxAnalyzer {
                             found = true;
                             ArrayList<String> temp = for_sem_analysis.get(i); //new array
 
-                            float num1;
-                            float num2;
+                            // float num1;
+                            // float num2;
+
+                            // If else
+                            // temp
+                            int next_i = i + 1;
+                            if(pairs.get(temp.get(0)).equals("If Statement")){
+                                if(var_map.get("bool").equals("TRUE")){
+                                    run_ie = 1;
+                                }else{
+                                    // skip to else statement
+                                    while(!(pairs.get(for_sem_analysis.get(next_i).get(0)).equals("Else Statement"))){
+                                        next_index+= 1;
+                                        next_i += 1;
+                                    }
+                                    i = i + next_index;
+                                    
+                                }
+                            } 
+
+                            if(pairs.get(temp.get(0)).equals("Else Statement")){
+                                if(run_ie == 1){ // this means if statement run
+                                    while(!(pairs.get(for_sem_analysis.get(next_i).get(0)).equals("End of If-Else and Switch-Case Statement"))){
+                                        oic_index+= 1;
+                                        next_i += 1;
+                                    }
+                                    i = i + oic_index;
+                                    oic_index = 0;
+                                }
+                            }
+
+
+                            if(pairs.get(temp.get(0)).equals("End of If-Else and Switch-Case Statement")){
+                                //System.out.println("End of If-Else statement");
+                            }
+                            
 
                             // Variable declaration
                             if(pairs.get(temp.get(0)).equals("Variable declaration")){
@@ -808,12 +806,17 @@ public class SyntaxAnalyzer {
                                     j += 1;
                                 }
                                 build_string = "\"" + build_string + "\"";
-                                var_map.put(temp.get(1),build_string);
+                                if(var_map.containsKey(temp.get(1))){
+                                    var_map.put(temp.get(1),build_string);
+                                }else{
+                                    var_map.put("IT",build_string);
+                                }
+                                
                             }
 
 
                             // COMPARISON OPERATIONS
-                            
+
                             float arg1 = 0;
                             float arg2 = 0;
 
@@ -824,8 +827,10 @@ public class SyntaxAnalyzer {
                                 if(pairs.get(temp.get(3)).equals("max")){
                                     arg2 = Float.parseFloat(temp.get(6));
                                     if(arg1 >= arg2){
+                                        var_map.put("bool","TRUE");
                                         System.out.println("TRUE");
                                     }else{
+                                        var_map.put("bool","FALSE");
                                         System.out.println("FALSE");
                                     }
                                 }
@@ -833,17 +838,21 @@ public class SyntaxAnalyzer {
                                 else if(pairs.get(temp.get(3)).equals("min")){
                                     arg2 = Float.parseFloat(temp.get(6));
                                     if(arg1 <= arg2){
+                                        var_map.put("bool","TRUE");
                                         System.out.println("TRUE");
                                     }else{
+                                        var_map.put("bool","FALSE");
                                         System.out.println("FALSE");
                                     }
                                 }
                                 else{
                                     arg2 = Float.parseFloat(temp.get(3));
                                     if(arg1 == arg2){
-                                        System.out.println("TRUE");
+                                        var_map.put("bool","TRUE");
+                                        //System.out.println("TRUE");
                                     }else{
-                                        System.out.println("FALSE");
+                                        var_map.put("bool","FALSE");
+                                        //System.out.println("FALSE");
                                     }
                                 }
                             }
@@ -878,14 +887,454 @@ public class SyntaxAnalyzer {
                                     }
                                 }
                             }
+
+                            // BOOLEAN OPERATIONS
+
                         }
                     }
-
+                    //syntax error
                     if (found == false){
-                        System.out.println(statements_array.get(i) + " Syntax Error");
-                        i = statements_array.size(); //break
+                        int temp_i = 0;
+                        Boolean var_found = false;
+                        Boolean error_found = false;
+                        int syntax_error_i; 
+                        int argument_count = 0;
+                        int operation_count = 0;
+                        int an_count = 0;
+                        String[] syntax_error_string = statements_array.get(i).split(" "); 
+                        int i_plus = i + 1;
+                        System.out.println(statements_array.get(i) + " Syntax Error at line " + i_plus);
+                        //Syntax Error checking 
+                        //variable declaration, missing pa yung sa operations
+                        if(syntax_error_string[0].equals("I")
+                        &&syntax_error_string[1].equals("HAS")
+                        &&syntax_error_string[2].equals("A")){
+                            //uninitialized variable
+                            if(syntax_error_string.length == 4){
+                                if(!syntax_error_string[3].matches("^[a-z]+[A-Za-z0-9_]*$")){
+                                    System.out.println("Syntax error: invalid variable name");
+                                    break;
+                                }
+                            }
+
+                            if(syntax_error_string.length > 4){
+                                if(!syntax_error_string[4].equals("ITZ")){
+                                    System.out.println("Syntax error: missing keyword");
+                                    break;
+                                }
+
+                                if(syntax_error_string.length == 5){
+                                    System.out.println("Syntax error: missing argument");
+                                }
+
+                                if(syntax_error_string.length > 6&&(!syntax_error_string[5].matches("^[a-z]+[A-Za-z0-9_]*$")
+                                ||!syntax_error_string[5].matches("^\".*\"$"))){
+                                    System.out.println("Syntax error: invalid type");
+                                    break;
+                                }
+                            }
+                        }
+                        //string concat "^\".*\"$"
+                        if(syntax_error_string[0].equals("SMOOSH")
+                        ||(syntax_error_string[0].equals("VISIBLE")&&syntax_error_string[1].equals("SMOOSH"))){
+                            if(syntax_error_string[syntax_error_string.length-1].equals("AN")){
+                                System.out.println("Syntax error: invalid end to operation");
+                                error_found = true;
+                                break;
+                            }
+
+                            temp_i = 1;
+                            if(syntax_error_string[1].equals("SMOOSH")){
+                                temp_i = 2;
+                            }
+                            
+                            if(syntax_error_string.length <= 3){
+                                if(!syntax_error_string[temp_i].matches("^\".*\"$")
+                                ||!syntax_error_string[temp_i].matches("^[a-z]+[A-Za-z0-9_]*$")){
+                                    System.out.println("Syntax error: invalid data type");
+                                    error_found = true;
+                                    break;
+                                }
+                            }
+                            
+                            if(syntax_error_string.length > 3){ 
+                                
+                                if(!syntax_error_string[temp_i].matches("^\".*\"$")
+                                ||!syntax_error_string[temp_i].matches("^[a-z]+[A-Za-z0-9_]*$")){
+                                    System.out.println("Syntax error: invalid data type");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(!syntax_error_string[temp_i+1].equals("AN")){
+                                    System.out.println("Syntax error: missing AN");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(!syntax_error_string[temp_i+2].matches("^\".*\"$")
+                                ||!syntax_error_string[temp_i+2].matches("^[a-z]+[A-Za-z0-9_]*$")){
+                                    System.out.println("Syntax error: invalid data type");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(syntax_error_string.length>4){
+                                    for(syntax_error_i = temp_i+3; syntax_error_i< syntax_error_string.length; syntax_error_i++){
+                                        if(!syntax_error_string[syntax_error_i].equals("AN")){
+                                            System.out.println("Syntax error: missing AN");
+                                            error_found = true;
+                                            break;
+                                        }
+
+                                        if(!syntax_error_string[syntax_error_i+1].matches("^\".*\"$")
+                                        ||!syntax_error_string[syntax_error_i+1].matches("^[a-z]+[A-Za-z0-9_]*$")){
+                                            System.out.println("Syntax error: invalid data type");
+                                            error_found = true;
+                                            break;
+                                        }
+
+                                        if(syntax_error_i<syntax_error_string.length-2){
+                                            syntax_error_i = syntax_error_i + 2;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        // map.put("^-?\\d+$", "NUMBR Literal");
+                        // map.put("^([+-]?\\d*\\.\\d*)$", "NUMBAR Literal");
+                        // map.put("^\".*\"$", "YARN Literal");
+                        // map.put("^WIN$|^FAIL$", "TROOF Literal");
+                        //numerical operations//////////////////////////////////////////////////////////////////////
+                        if(syntax_error_string[0].equals("SUM")
+                            ||syntax_error_string[0].equals("DIFF")
+                            ||syntax_error_string[0].equals("PRODUKT")
+                            ||syntax_error_string[0].equals("QUOSHUNT")
+                            ||syntax_error_string[0].equals("MOD")){ 
+                                if(syntax_error_string[syntax_error_string.length-1].equals("AN")){
+                                    System.out.println("Syntax error: invalid end to operation");
+                                    error_found = true;
+                                    break;
+                                }
+                            
+                                for(syntax_error_i = 0; syntax_error_i < syntax_error_string.length; syntax_error_i++){
+                                    if(
+                                    syntax_error_string[syntax_error_i].equals("SUM")
+                                    ||syntax_error_string[syntax_error_i].equals("DIFF")
+                                    ||syntax_error_string[syntax_error_i].equals("PRODUKT")
+                                    ||syntax_error_string[syntax_error_i].equals("QUOSHUNT")
+                                    ||syntax_error_string[syntax_error_i].equals("MOD")
+                                    &&syntax_error_string[syntax_error_i+1].equals("OF")){
+                                        operation_count++;
+                                        syntax_error_i++;
+                                    }else if(    
+                                    syntax_error_string[syntax_error_i].matches("^-?\\d+$")
+                                    ||syntax_error_string[syntax_error_i].matches("^([+-]?\\d*\\.\\d*)$")
+                                    ||syntax_error_string[syntax_error_i].matches("^[a-z]+[A-Za-z0-9_]*$")//check variable type here
+                                    ||syntax_error_string[syntax_error_i].matches("^\"-?\\d+\"$")
+                                    ||syntax_error_string[syntax_error_i].matches("^\"([+-]?\\d*\\.\\d*)\"$")
+                                    ){
+                                        //if two numbers or variables are beside each other
+                                        if(
+                                        syntax_error_string[syntax_error_i+1].matches("^-?\\d+$")
+                                        ||syntax_error_string[syntax_error_i+1].matches("^([+-]?\\d*\\.\\d*)$")
+                                        ||syntax_error_string[syntax_error_i+1].matches("^[a-z]+[A-Za-z0-9_]*$") //check variable type here
+                                        ||syntax_error_string[syntax_error_i].matches("^\"-?\\d+\"$")
+                                        ||syntax_error_string[syntax_error_i].matches("^\"([+-]?\\d*\\.\\d*)\"$")
+                                        &&syntax_error_i<syntax_error_string.length-1){
+                                            System.out.println("Syntax error: missing AN");
+                                            error_found = true;
+                                            break;
+                                        }else{
+                                            argument_count++;
+                                        }
+                                    //if two ANs are beside each other
+                                    }else if(
+                                    syntax_error_string[syntax_error_i].equals("AN")
+                                    &&syntax_error_string[syntax_error_i+1].equals("AN")
+                                    &&syntax_error_i<syntax_error_string.length-1){
+                                        System.out.println("Syntax error: missing an argument");
+                                        error_found = true;
+                                        break;
+                                    }else{
+                                        System.out.println("Syntax error: invalid statement");
+                                        error_found = true;
+                                        break;
+                                    }
+                                }
+                                //correct format but has too many or too little arguments
+                                if(error_found == false){
+                                    if(operation_count >= argument_count){
+                                        System.out.println("Syntax error: too few arguments");
+                                    }
+                                    if(argument_count - operation_count > 2){
+                                        System.out.println("Syntax error: too many arguments");
+                                    }
+                                }
+     
+                            }
+                        //Boolean Operations finite arity
+                        //ALL OF NOT x AN BOTH OF y AN z AN EITHER OF x AN y MKAY 
+                        if(
+                        (syntax_error_string[0].equals("BOTH")
+                        ||syntax_error_string[0].equals("EITHER")
+                        ||syntax_error_string[0].equals("WON")
+                        ||syntax_error_string[0].equals("ALL")
+                        ||syntax_error_string[0].equals("ANY")
+                        &&syntax_error_string[1].equals("OF"))
+                        ||syntax_error_string[0].equals("NOT")){
+                            if(syntax_error_string[syntax_error_string.length-1].equals("AN")){
+                                System.out.println("Syntax error: invalid end to statement");
+                                error_found = true;
+                                break;
+                            }else if(syntax_error_string[0].equals("NOT")){
+                                if(syntax_error_string.length > 2){
+                                    System.out.println("Syntax error: invalid statement length");
+                                    error_found = true;
+                                    break;
+                                }else if(syntax_error_string.length < 2){
+                                    System.out.println("Syntax error: missing argument");
+                                    error_found = true;
+                                    break;
+                                }else{
+                                    if(!(syntax_error_string[1].equals("WIN")
+                                    ||syntax_error_string[1].equals("FAIL")
+                                    ||syntax_error_string[1].matches("^[a-z]+[A-Za-z0-9_]*$"))){ //check variable type here
+                                        System.out.println("Syntax error: invalid variable type");
+                                    }
+                                }
+                            }else if((syntax_error_string[0].equals("BOTH")
+                                    ||syntax_error_string[0].equals("EITHER")
+                                    ||syntax_error_string[0].equals("WON"))
+                                    &&syntax_error_string[1].equals("OF")){
+                                    if(
+                                        !(syntax_error_string[2].equals("WIN")
+                                        ||syntax_error_string[2].equals("FAIL")
+                                        ||syntax_error_string[2].matches("^[a-z]+[A-Za-z0-9_]*$"))){
+                                            System.out.println("Syntax error: invalid argument type");  
+                                            error_found = true;
+                                            break;
+                                    }else if(!syntax_error_string[3].equals("AN")){
+                                        System.out.println("Syntax error: missing AN operator");
+                                    }else if(!(syntax_error_string[4].equals("WIN")
+                                            ||syntax_error_string[4].equals("FAIL")
+                                            ||syntax_error_string[4].matches("^[a-z]+[A-Za-z0-9_]*$"))){
+                                            System.out.println("Syntax error: invalid argument type");  
+                                            error_found = true;
+                                            break;
+                                    }else if(syntax_error_string.length > 5){
+                                        System.out.println("Syntax error: extra argument");
+                                    }
+                                }
+                        }
+                        //boolean operations infinite arity/////////////////////////////////////////////////////////////
+                        if((syntax_error_string[0].equals("ALL")||syntax_error_string[0].equals("ANY"))
+                        &&syntax_error_string[1].equals("OF")){
+                            if(syntax_error_string[syntax_error_string.length-1].equals("AN")
+                            ||!syntax_error_string[syntax_error_string.length-1].equals("MKAY")){
+                                System.out.println("Syntax error: invalid end to statement");
+                                error_found = true;
+                                break;
+                            }
+                            int mkay_count = 0;
+                            for(syntax_error_i = 2; syntax_error_i < syntax_error_string.length; syntax_error_i++){
+                                if(syntax_error_string[syntax_error_i].equals("MKAY")){
+                                    mkay_count++;
+                                }
+                            }
+
+                            if(mkay_count > 1){
+                                System.out.println("Syntax error: multiple MKAYs");
+                                error_found = true;
+                                break;
+                               
+                            }
+                        
+                            for(syntax_error_i = 2; syntax_error_i < syntax_error_string.length; syntax_error_i++){
+
+
+                                if(syntax_error_string[syntax_error_i].equals("NOT")){ 
+                                    if(
+                                    !(syntax_error_string[syntax_error_i+1].equals("WIN")
+                                    ||syntax_error_string[syntax_error_i+1].equals("FAIL")
+                                    ||syntax_error_string[syntax_error_i+1].matches("^[a-z]+[A-Za-z0-9_]*$"))
+                                    &&syntax_error_i<syntax_error_string.length-1){          //check variable type here
+                                        System.out.println("Syntax error: invalid variable type");
+                                        error_found = true;
+                                        break;
+                                    }else if(!syntax_error_string[syntax_error_i+2].equals("AN")
+                                    &&syntax_error_i+2<syntax_error_string.length-1){
+                                            System.out.println("Syntax error: invalid end to statement asdasd");
+                                            error_found = true;
+                                            break;
+                                    }
+
+                                    if(syntax_error_i<syntax_error_string.length-2){
+                                        syntax_error_i = syntax_error_i + 2;
+                                    }
+                                    
+                                }
+                                if(
+                                    (syntax_error_string[syntax_error_i].equals("BOTH")
+                                    ||syntax_error_string[syntax_error_i].equals("EITHER")
+                                    ||syntax_error_string[syntax_error_i].equals("WON"))
+                                    &&syntax_error_string[syntax_error_i+1].equals("OF")){
+                                    if(
+                                        !(syntax_error_string[syntax_error_i+2].equals("WIN")
+                                        ||syntax_error_string[syntax_error_i+2].equals("FAIL")
+                                        ||syntax_error_string[syntax_error_i+2].matches("^[a-z]+[A-Za-z0-9_]*$"))){
+                                            System.out.println("Syntax error: invalid argument type");  
+                                            error_found = true;
+                                            break;
+                                    }else if(!syntax_error_string[syntax_error_i+3].equals("AN")){
+                                        System.out.println("Syntax error: missing AN operator");
+                                        error_found = true;
+                                        break;
+                                    }else if(
+                                        !(syntax_error_string[syntax_error_i+4].equals("WIN")
+                                        ||syntax_error_string[syntax_error_i+4].equals("FAIL")
+                                        ||syntax_error_string[syntax_error_i+4].matches("^[a-z]+[A-Za-z0-9_]*$"))){
+                                            System.out.println("Syntax error: invalid argument type");  
+                                            error_found = true;
+                                            break;
+                                    }else if(!syntax_error_string[syntax_error_i+5].equals("AN")
+                                    &&syntax_error_i+5<syntax_error_string.length-1){
+                                            System.out.println("Syntax error: invalid end to statement asdasd");
+                                            error_found = true;
+                                            break;
+                                    }
+                                    
+                                    if(syntax_error_i<syntax_error_string.length-5){
+                                        syntax_error_i = syntax_error_i + 5;
+                                    }
+                                }
+                            }
+                        }
+
+                        //Comparison Operations and Relational Operations////
+                        //comparison operations
+                        if((syntax_error_string[0].equals("BOTH")
+                            &&syntax_error_string[1].equals("SAEM"))
+                            ||syntax_error_string[0].equals("DIFFRINT")){
+                            if(syntax_error_string[syntax_error_string.length-1].equals("AN")){
+                                System.out.println("Syntax error: invalid end to statement");
+                                error_found = true;
+                                break;
+                            }
+                            temp_i = 1;
+                            if(syntax_error_string[0].equals("BOTH")){
+                                temp_i = 2;
+                            }    
+                            
+                            if(syntax_error_string.length <= 5){
+                                if(syntax_error_string[temp_i].matches("^-?\\d+$")
+                                ||syntax_error_string[temp_i].matches("^([+-]?\\d*\\.\\d*)$")){
+                                    System.out.println("Syntax error: invalid data type");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(!syntax_error_string[temp_i+1].equals("AN")){
+                                    System.out.println("Syntax error: AN expected");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(syntax_error_string[temp_i+2].matches("^-?\\d+$")
+                                ||syntax_error_string[temp_i+2].matches("^([+-]?\\d*\\.\\d*)$")){
+                                    System.out.println("Syntax error: invalid data type");
+                                    error_found = true;
+                                    break;
+                                }
+                            }
+
+                            //relational operations
+                            if(syntax_error_string.length > 5 && syntax_error_string.length <= 9){
+                                if(syntax_error_string[temp_i].matches("^-?\\d+$")
+                                ||syntax_error_string[temp_i].matches("^([+-]?\\d*\\.\\d*)$")){
+                                    System.out.println("Syntax error: invalid data type");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(!syntax_error_string[temp_i+1].equals("AN")){
+                                    System.out.println("Syntax error: AN expected");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(syntax_error_string[temp_i+2].equals("SMALLR")
+                                ||syntax_error_string[temp_i+2].equals("BIGGR")){
+                                    System.out.println("Syntax error: invalid data type");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(!syntax_error_string[temp_i+3].equals("OF")){
+                                    System.out.println("Syntax error: OF expected");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(syntax_error_string[temp_i+4].matches("^-?\\d+$")
+                                ||syntax_error_string[temp_i+4].matches("^([+-]?\\d*\\.\\d*)$")){
+                                    System.out.println("Syntax error: invalid data type");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(!syntax_error_string[temp_i+5].equals("AN")){
+                                    System.out.println("Syntax error: AN expected");
+                                    error_found = true;
+                                    break;
+                                }
+
+                                if(syntax_error_string[temp_i+6].matches("^-?\\d+$")
+                                ||syntax_error_string[temp_i+6].matches("^([+-]?\\d*\\.\\d*)$")){
+                                    System.out.println("Syntax error: invalid data type");
+                                    error_found = true;
+                                    break;
+                                }
+                            }
+
+                            if(syntax_error_string.length >= 10){
+                                System.out.println("Syntax error: invalid operation length");
+                                error_found = true;
+                                break;
+                            }
+                        }
+                        //Typecasting
+                        // if(syntax_error_string[0].equals("MAEK")){
+                        //         for (HashMap.Entry<String, String> set:var_map.entrySet()){        
+                        //             if(Pattern.matches(set.getKey(),syntax_error_string[1])){
+                        //                 var_found = true;
+                        //             }
+                        //         }
+                        //         if(var_found == false){
+                        //             System.out.println("Syntax error: Variable has not been initialized");
+                        //         }else{
+                        //             if(syntax_error_string.length == 4){
+                        //                 if(syntax_error_string[2].equals("A")){
+                        //                     if(!syntax_error_string[3].equals("NUMBR")
+                        //                     ||!syntax_error_string[3].equals("NUMBAR")
+                        //                     ||!syntax_error_string[3].equals("YARN")){
+                        //                     System.out.println("Syntax error: invalid data type");
+                        //                     }
+                        //                 }
+                        //         }else if(syntax_error_string.length == 3){
+                        //                 if(!syntax_error_string[3].equals("NUMBR")
+                        //                 ||!syntax_error_string[3].equals("NUMBAR")
+                        //                 ||!syntax_error_string[3].equals("YARN")){
+                        //                 System.out.println("Syntax error: invalid data type");
+                        //                 }
+                        //             }
+                        //         }   
+                        //     }
+                            
+                            i = statements_array.size(); //break
                     }
                 }
+                System.out.print(var_map);
             }
         }
 }

@@ -1,0 +1,6 @@
+HAI
+    I HAS A thing
+    GIMMEH thing
+    SMOOSH thing AN "String2" AN "String3" AN " "
+    VISIBLE thing
+KTHXBYE
