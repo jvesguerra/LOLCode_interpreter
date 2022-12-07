@@ -1,0 +1,13 @@
+HAI
+    BOTH SAEM 5 AN 4
+    O RLY?
+        YA RLY
+            VISIBLE "CMSC"
+            VISIBLE "124"
+        NO WAI
+            VISIBLE "Shulamite Carvajal"
+            I HAS A thing ITZ 5
+            SUM OF 5 AN 10
+            VISIBLE IT
+    OIC
+KTHXBYE

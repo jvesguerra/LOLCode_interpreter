@@ -206,6 +206,11 @@ public class SyntaxAnalyzer {
         grammar.put("End of If-Else and Switch-Case Statement", "^OIC$");
         grammar.put("Else-If Statement", "^MEBBE$");
 
+        // switch case
+        grammar.put("Start of Switch-Case", "^WTF[?]$");
+        grammar.put("Switch-Case Default Statement", "^OMGWTF$");
+        grammar.put("Switch-Case/Loop break statement", "^GTFO$");
+       
 
         grammar.put("NUMBR Literal", "^-?\\d+$");
         grammar.put("HAI", "^HAI$");
@@ -374,6 +379,13 @@ public class SyntaxAnalyzer {
         + grammar.get("Mod").replaceAll("^.|.$", "") + "|" 
         + grammar.get("Addition").replaceAll("^.|.$", "")
         + ")$");
+
+        grammar.put("OMG <value literal>", "^OMG ("
+        + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "") + "|"
+        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "")+"|"
+        + grammar.get("YARN Literal").replaceAll("^.|.$", "")+"|"
+        + grammar.get("TROOF Literal").replaceAll("^.|.$", "")+"|"
+         + ")$");
 
         return grammar;
     }
@@ -577,6 +589,10 @@ public class SyntaxAnalyzer {
                 int run_ie = 0;
                 int oic_index = 0;
                 int next_index = 0;
+                int default_index = 0;
+                int omg_index = 0;
+                int switch_case = 0;
+                int omg = 0;
                 for(int i = 0; i < statements_array.size(); i++){
                     boolean found = false;
                     for (HashMap.Entry<String, String> set:grammar.entrySet()){
@@ -584,13 +600,52 @@ public class SyntaxAnalyzer {
                             correct_syntax.put(statements_array.get(i), set.getKey());
                             found = true;
                             ArrayList<String> temp = for_sem_analysis.get(i); //new array
+                            int next_i = i + 1;
 
                             // float num1;
                             // float num2;
 
+                            // Switch-case statements
+
+                            // start of switch case
+                            if(pairs.get(temp.get(0)).equals("Start of Switch-Case")){
+                            }
+
+                            // OMG lines
+                            if(pairs.get(temp.get(0)).equals("Switch-Case Statement")){
+                                // checks if IT == OMG <value>
+                                if(temp.get(1).equals(var_map.get("IT")) && omg == 0){
+                                    omg = 1;
+                                } 
+                                // ELSE FIND NEXT OMG or default
+                                else{
+                                    while((!(pairs.get(for_sem_analysis.get(next_i).get(0)).equals("Switch-Case Statement")))){
+                                        if(pairs.get(for_sem_analysis.get(next_i).get(0)).equals("Switch-Case Default Statement")){
+                                            break;
+                                        }
+                                        omg_index+= 1;
+                                        next_i += 1;
+                                    }
+                                    i = i + omg_index;                                    
+                                    omg_index = 0;
+                                }
+                            }
+
+                            // every GTFO we check if a case has already been run
+                            // if so we skip to OIC
+                            if(pairs.get(temp.get(0)).equals("Switch-Case/Loop break statement")){
+                                // means a case have been run
+                                if(omg == 1){
+                                    while(!(pairs.get(for_sem_analysis.get(next_i).get(0)).equals("End of If-Else and Switch-Case Statement"))){
+                                        oic_index+= 1;
+                                        next_i += 1;
+                                    }
+                                    i = i + oic_index;
+                                    oic_index = 0;
+                                }
+                            }
+
                             // If else
-                            // temp
-                            int next_i = i + 1;
                             if(pairs.get(temp.get(0)).equals("If Statement")){
                                 if(var_map.get("bool").equals("TRUE")){
                                     run_ie = 1;
@@ -601,6 +656,7 @@ public class SyntaxAnalyzer {
                                         next_i += 1;
                                     }
                                     i = i + next_index;
+                                    next_index = 0;
                                     
                                 }
                             } 
