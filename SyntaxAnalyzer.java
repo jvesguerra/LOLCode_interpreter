@@ -62,8 +62,8 @@ public class SyntaxAnalyzer {
         map.put("^UPPIN$", "Increments a variable by 1");
         map.put("^NERFIN$", "Decrement by a variable1");
         map.put("^YR$", "Refers to the current argument or variable");
-        map.put("^TIL$", "Repeats a loop");
-        map.put("^WILE$", "Repeats a loop");
+        map.put("^TIL$", "Repeat loop while FAIL");
+        map.put("^WILE$", "Repeat loop while WIN");
         map.put("^IM OUTTA YR$", "End of loop");
         map.put("^AN$", "Seperates arguments in an expression");
         map.put("^IT$", "If-Else/Switch-Case default variable");
@@ -87,8 +87,6 @@ public class SyntaxAnalyzer {
         // map.put("^[A-Za-z]+[A-Za-z0-9_]*$", "Variable");
         map.put("^HOW IZ I$", "Function Identifier");
         map.put("^IF U SAY SO$", "Function Identifier");
-        map.put("^IM OUTTA YR$", "Loop Identifier");
-        map.put("^IM IN YR$", "Loop Identifier");
 
         return map;
     }
@@ -387,6 +385,14 @@ public class SyntaxAnalyzer {
         + grammar.get("TROOF Literal").replaceAll("^.|.$", "")+"|"
          + ")$");
 
+         grammar.put("Loop IM IN YR", "^IM IN YR " + var.get("Variable").replaceAll("^.|.$", "") + " UPPIN YR "
+         + var.get("Variable").replaceAll("^.|.$", "") + " (TIL|WILE) ("
+         + grammar.get("Both saem").replaceAll("^.|.$", "") + "|"
+         + grammar.get("Diffrint").replaceAll("^.|.$", "") +
+          ")$");
+
+        grammar.put("Loop IM OUTTA YR", "^IM OUTTA YR " + var.get("Variable").replaceAll("^.|.$", "") +
+        "$");
         return grammar;
     }
     
@@ -557,7 +563,7 @@ public class SyntaxAnalyzer {
         if(tokens_syntax.get(0).equals("HAI") || tokens_syntax.get(tokens_syntax_size).equals("KTHXBYE")){
                 // BUILD FINAL SYNTAX TOKENS
                 final_syntax_tokens = get_final_syntax_tokens(tokens_syntax, final_syntax_tokens, tokens_syntax_size);
-                System.out.println(final_syntax_tokens);
+                //System.out.println(final_syntax_tokens);
 
                 // build hashmap for semantic analysis
                 int op_counter = 0;
@@ -581,7 +587,7 @@ public class SyntaxAnalyzer {
                 //remove spaces sa harap ng items sa statement array
                 statements_array = clean_statements_array(statements_array);
 
-                System.out.println(statements_array);
+                //System.out.println(statements_array);
 
                 // Checks if syntax is correct
                 //correct_syntax = check_correct_syntax(statements_array, grammar, correct_syntax);
@@ -589,10 +595,12 @@ public class SyntaxAnalyzer {
                 int run_ie = 0;
                 int oic_index = 0;
                 int next_index = 0;
-                int default_index = 0;
                 int omg_index = 0;
-                int switch_case = 0;
                 int omg = 0;
+                int run_loop = 0;
+                int start_of_loop = 0;
+                int temp_num_for_loop = 0;
+                int wile_til = 0;
                 for(int i = 0; i < statements_array.size(); i++){
                     boolean found = false;
                     for (HashMap.Entry<String, String> set:grammar.entrySet()){
@@ -600,14 +608,106 @@ public class SyntaxAnalyzer {
                             correct_syntax.put(statements_array.get(i), set.getKey());
                             found = true;
                             ArrayList<String> temp = for_sem_analysis.get(i); //new array
-                            int next_i = i + 1;
+                            int next_i = i + 1;                            
+                            float arg1 = 0;
+                            float arg2 = 0;
 
-                            // float num1;
-                            // float num2;
+                            // LOOPS
+                            if(pairs.get(temp.get(0)).equals("Start of loop")){
+                                if (run_loop == 0){
+                                    start_of_loop = i;
+                                }
+                                var_map.put(temp.get(1),"Loop Label");
 
-                            // Switch-case statements
+                                if(run_loop == 1){
+                                    if(pairs.get(temp.get(2)).equals("Increments a variable by 1")){
+                                        temp_num_for_loop = Integer.parseInt(var_map.get(temp.get(4))) + 1;
+                                        var_map.put(temp.get(4),Integer.toString(temp_num_for_loop));
+                                    }
+    
+                                    if(pairs.get(temp.get(2)).equals("Decrement by a variable1")){
+                                        temp_num_for_loop = Integer.parseInt(var_map.get(temp.get(4))) - 1;
+                                        var_map.put(temp.get(4),Integer.toString(temp_num_for_loop));
+                                    }
+                                }
 
-                            // start of switch case
+                                if(pairs.get(temp.get(5)).equals("Repeat loop while FAIL")){ 
+                                    if(pairs.get(temp.get(6)).equals("== Comparison Operator")){
+                                        // INITIALIZE ARG1 and ARG2
+                                        if(var_map.containsKey(temp.get(7))){
+                                            arg1 = Float.parseFloat(var_map.get(temp.get(7)));
+                                        }else{
+                                            arg1 = Float.parseFloat(temp.get(7));
+                                        }
+                                        if(var_map.containsKey(temp.get(9))){
+                                            arg2 = Float.parseFloat(var_map.get(temp.get(9)));
+                                        }else{
+                                            arg2 = Float.parseFloat(temp.get(9));
+                                        }
+    
+                                        if(arg1 == arg2){
+                                            var_map.put("loop_bool","WIN");
+                                            run_loop = 0;
+                                        }else{
+                                            var_map.put("loop_bool","FAIL");
+                                        }
+                                    }
+                                }
+                                
+
+                                if(pairs.get(temp.get(5)).equals("Repeat loop while WIN")){                                
+                                    if(pairs.get(temp.get(6)).equals("!= Comparison Operator")){
+                                    // INITIALIZE ARG1 and ARG2
+                                    if(var_map.containsKey(temp.get(7))){
+                                        arg1 = Float.parseFloat(var_map.get(temp.get(7)));
+                                    }else{
+                                        arg1 = Float.parseFloat(temp.get(7));
+                                    }
+                                    if(var_map.containsKey(temp.get(9))){
+                                        arg2 = Float.parseFloat(var_map.get(temp.get(9)));
+                                    }else{
+                                        arg2 = Float.parseFloat(temp.get(9));
+                                    }
+
+                                    if(arg1 != arg2){
+                                        var_map.put("loop_bool","WIN");
+                                        wile_til = 1;
+                                    }else{
+                                        var_map.put("loop_bool","FAIL");
+
+                                        
+                                        next_i = i + 1;
+                                        if(run_loop == 1){
+                                            while(!(pairs.get(for_sem_analysis.get(next_i).get(0)).equals("End of loop"))){
+                                                oic_index+= 1;
+                                                next_i += 1;
+                                            }
+                                            i = i + oic_index;
+                                            oic_index = 0;
+                                        }
+                                        run_loop = 0;
+                                    }
+                                }}
+
+                                run_loop = 1;
+                            }
+
+                            if (run_loop == 1){
+                                if(pairs.get(temp.get(0)).equals("End of loop")){
+                                    if(wile_til == 0){
+                                        if(var_map.get("loop_bool").equals("FAIL")){
+                                            i = start_of_loop;
+                                        }
+                                    }else{
+                                        if(var_map.get("loop_bool").equals("WIN")){
+                                            i = start_of_loop;
+                                        }
+                                    }
+
+                                }
+                            }
+
+                            // SWITCH CASE
                             if(pairs.get(temp.get(0)).equals("Start of Switch-Case")){
                             }
 
@@ -873,8 +973,6 @@ public class SyntaxAnalyzer {
 
                             // COMPARISON OPERATIONS
 
-                            float arg1 = 0;
-                            float arg2 = 0;
 
                             // BOTH SAEM
                             if(pairs.get(temp.get(0)).equals("== Comparison Operator")){
@@ -883,10 +981,10 @@ public class SyntaxAnalyzer {
                                 if(pairs.get(temp.get(3)).equals("max")){
                                     arg2 = Float.parseFloat(temp.get(6));
                                     if(arg1 >= arg2){
-                                        var_map.put("bool","TRUE");
+                                        var_map.put("bool","WIN");
                                         System.out.println("TRUE");
                                     }else{
-                                        var_map.put("bool","FALSE");
+                                        var_map.put("bool","FAIL");
                                         System.out.println("FALSE");
                                     }
                                 }
@@ -894,20 +992,20 @@ public class SyntaxAnalyzer {
                                 else if(pairs.get(temp.get(3)).equals("min")){
                                     arg2 = Float.parseFloat(temp.get(6));
                                     if(arg1 <= arg2){
-                                        var_map.put("bool","TRUE");
+                                        var_map.put("bool","WIN");
                                         System.out.println("TRUE");
                                     }else{
-                                        var_map.put("bool","FALSE");
+                                        var_map.put("bool","FAIL");
                                         System.out.println("FALSE");
                                     }
                                 }
                                 else{
                                     arg2 = Float.parseFloat(temp.get(3));
                                     if(arg1 == arg2){
-                                        var_map.put("bool","TRUE");
+                                        var_map.put("bool","WIN");
                                         //System.out.println("TRUE");
                                     }else{
-                                        var_map.put("bool","FALSE");
+                                        var_map.put("bool","FAIL");
                                         //System.out.println("FALSE");
                                     }
                                 }
@@ -920,16 +1018,16 @@ public class SyntaxAnalyzer {
                                 if(pairs.get(temp.get(3)).equals("max")){
                                     arg2 = Float.parseFloat(temp.get(6));
                                     if(arg1 < arg2){
-                                        System.out.println("TRUE");
+                                        System.out.println("WIN");
                                     }else{
-                                        System.out.println("FALSE");
+                                        System.out.println("FAIL");
                                     }
                                 }
                                 // SMALLR
                                 else if(pairs.get(temp.get(3)).equals("min")){
                                     arg2 = Float.parseFloat(temp.get(6));
                                     if(arg1 > arg2){
-                                        System.out.println("TRUE");
+                                        System.out.println("WIN");
                                     }else{
                                         System.out.println("FALSE");
                                     }
@@ -937,9 +1035,9 @@ public class SyntaxAnalyzer {
                                 else{
                                     arg2 = Float.parseFloat(temp.get(3));
                                     if(arg1 != arg2){
-                                        System.out.println("TRUE");
+                                        System.out.println("WIN");
                                     }else{
-                                        System.out.println("FALSE");
+                                        System.out.println("FAIL");
                                     }
                                 }
                             }

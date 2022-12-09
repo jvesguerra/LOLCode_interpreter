@@ -1,0 +1,14 @@
+HAI
+    SUM OF 3 AN 3
+    WTF?
+    OMG 5.0
+        VISIBLE "5.0"
+        GTFO
+    OMG 6.0
+        VISIBLE "6.0"
+        GTFO
+    OMGWTF
+        VISIBLE "default"
+        GTFO
+    OIC
+KTHXBYE
