@@ -271,6 +271,22 @@ public class SyntaxAnalyzer {
         + var.get("Number").replaceAll("^.|.$", "") +"|" 
         + var.get("Variable").replaceAll("^.|.$", "") + 
         ")]+$");
+
+        grammar.put("Max number","^BIGGR OF (" 
+        + var.get("Number").replaceAll("^.|.$", "")+"|"
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") [AN ("
+        + var.get("Number").replaceAll("^.|.$", "") +"|" 
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")]+$");
+
+        grammar.put("Min number","^SMALLR OF (" 
+        + var.get("Number").replaceAll("^.|.$", "")+"|"
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ") [AN ("
+        + var.get("Number").replaceAll("^.|.$", "") +"|" 
+        + var.get("Variable").replaceAll("^.|.$", "") + 
+        ")]+$");
         
         //COMPARISON OPERATIONS
         grammar.put("Both saem","^BOTH SAEM (" 
@@ -375,6 +391,8 @@ public class SyntaxAnalyzer {
         + grammar.get("Multiplication").replaceAll("^.|.$", "") + "|" 
         + grammar.get("Division").replaceAll("^.|.$", "") + "|" 
         + grammar.get("Mod").replaceAll("^.|.$", "") + "|" 
+        + grammar.get("Min number").replaceAll("^.|.$", "") + "|" 
+        + grammar.get("Max number").replaceAll("^.|.$", "") + "|" 
         + grammar.get("Addition").replaceAll("^.|.$", "")
         + ")$");
 
@@ -471,7 +489,7 @@ public class SyntaxAnalyzer {
 
         // read file and store strings into array 
         try {                                      
-        File file = new File("presentation.txt"); //file name
+        File file = new File("variables.txt"); //file name
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
             String data = scanner.nextLine();
@@ -747,7 +765,7 @@ public class SyntaxAnalyzer {
 
                             // If else
                             if(pairs.get(temp.get(0)).equals("If Statement")){
-                                if(var_map.get("bool").equals("TRUE")){
+                                if(var_map.get("bool").equals("WIN")){
                                     run_ie = 1;
                                 }else{
                                     // skip to else statement
@@ -886,6 +904,28 @@ public class SyntaxAnalyzer {
                                             }
                                         }
 
+                                        if(pairs.get(temp.get(op)).equals("max")){
+                                            temp_num = Float.parseFloat(temp.get(counter));
+                                            if(accum == 0){
+                                                accum = temp_num;
+                                            }else{
+                                                if(accum < temp_num){ // if accum is less then it is not max
+                                                    accum = temp_num;
+                                                }
+                                            }
+                                        }
+
+                                        if(pairs.get(temp.get(op)).equals("min")){
+                                            temp_num = Float.parseFloat(temp.get(counter));
+                                            if(accum == 0){
+                                                accum = temp_num;
+                                            }else{
+                                                if(accum > temp_num){ // if accum is greater then it is not min
+                                                    accum = temp_num;
+                                                }
+                                            }
+                                        }
+
                                         if(counter == temp_length-1){
                                             counter++;
                                         }else{
@@ -982,10 +1022,10 @@ public class SyntaxAnalyzer {
                                     arg2 = Float.parseFloat(temp.get(6));
                                     if(arg1 >= arg2){
                                         var_map.put("bool","WIN");
-                                        System.out.println("TRUE");
+                                        //System.out.println("TRUE");
                                     }else{
                                         var_map.put("bool","FAIL");
-                                        System.out.println("FALSE");
+                                        //System.out.println("FALSE");
                                     }
                                 }
                                 // SMALLR
@@ -993,10 +1033,10 @@ public class SyntaxAnalyzer {
                                     arg2 = Float.parseFloat(temp.get(6));
                                     if(arg1 <= arg2){
                                         var_map.put("bool","WIN");
-                                        System.out.println("TRUE");
+                                        //System.out.println("TRUE");
                                     }else{
                                         var_map.put("bool","FAIL");
-                                        System.out.println("FALSE");
+                                        //System.out.println("FALSE");
                                     }
                                 }
                                 else{
@@ -1018,26 +1058,32 @@ public class SyntaxAnalyzer {
                                 if(pairs.get(temp.get(3)).equals("max")){
                                     arg2 = Float.parseFloat(temp.get(6));
                                     if(arg1 < arg2){
-                                        System.out.println("WIN");
+                                        //System.out.println("WIN");
+                                        var_map.put("bool","WIN");
                                     }else{
-                                        System.out.println("FAIL");
+                                        //System.out.println("FAIL");
+                                        var_map.put("bool","FAIL");
                                     }
                                 }
                                 // SMALLR
                                 else if(pairs.get(temp.get(3)).equals("min")){
                                     arg2 = Float.parseFloat(temp.get(6));
                                     if(arg1 > arg2){
-                                        System.out.println("WIN");
+                                        //System.out.println("WIN");
+                                        var_map.put("bool","WIN");
                                     }else{
-                                        System.out.println("FALSE");
+                                        //System.out.println("FALSE");
+                                        var_map.put("bool","FAIL");
                                     }
                                 }
                                 else{
                                     arg2 = Float.parseFloat(temp.get(3));
                                     if(arg1 != arg2){
-                                        System.out.println("WIN");
+                                        //System.out.println("WIN");
+                                        var_map.put("bool","WIN");
                                     }else{
-                                        System.out.println("FAIL");
+                                        //System.out.println("FAIL");
+                                        var_map.put("bool","FAIL");
                                     }
                                 }
                             }

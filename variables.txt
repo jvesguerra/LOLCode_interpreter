@@ -1,10 +1,21 @@
 HAI
-    I HAS A temp ITZ 3.14
+    I HAS A temp
     VISIBLE temp
-    I HAS A temp2
-    I HAS A thing ITZ SUM OF 4 AN 3
-    VISIBLE thing
-    I HAS A temp3
-    GIMMEH temp3
+    I HAS A temp2 ITZ 5
+    VISIBLE temp2
+    I HAS A temp3 ITZ SUM OF 2 AN 3
     VISIBLE temp3
+    I HAS A temp4 ITZ DIFF OF 2 AN 3
+    VISIBLE temp4
+    I HAS A temp5 ITZ PRODUKT OF 2 AN 3
+    VISIBLE temp5
+    I HAS A temp6 ITZ QUOSHUNT OF 2 AN 3
+    VISIBLE temp6
+    I HAS A temp7 ITZ MOD OF 2 AN 3
+    VISIBLE temp7
+    VISIBLE bigger
+    I HAS A temp8 ITZ BIGGR OF 5 AN 3
+    VISIBLE temp8
+    I HAS A temp9 ITZ SMALLR OF 1000 AN 3
+    VISIBLE temp9
 KTHXBYE
