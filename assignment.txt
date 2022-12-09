@@ -17,6 +17,6 @@ HAI
     I HAS A temp6
     temp6 R BOTH DIFFRINT 6 AN 5
     VISIBLE temp6
-    temp6 R BOTH SAEM 6 AN BIGGR OF 6 AN 5
+    temp6 R BOTH SAEM 6 AN BIGGR OF 5 AN 5
     VISIBLE temp6
 KTHXBYE
