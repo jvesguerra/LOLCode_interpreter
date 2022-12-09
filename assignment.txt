@@ -1,0 +1,22 @@
+HAI
+    I HAS A temp
+    temp R "String"
+    VISIBLE temp
+    I HAS A temp2
+    temp2 R FAIL
+    VISIBLE temp2
+    I HAS A temp3
+    temp3 R 3
+    VISIBLE temp3
+    I HAS A temp4
+    temp4 R temp3
+    VISIBLE temp4
+    I HAS A temp5
+    temp5 R SUM OF 5 AN 10
+    VISIBLE temp5
+    I HAS A temp6
+    temp6 R BOTH DIFFRINT 6 AN 5
+    VISIBLE temp6
+    temp6 R BOTH SAEM 6 AN BIGGR OF 6 AN 5
+    VISIBLE temp6
+KTHXBYE

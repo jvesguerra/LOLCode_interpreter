@@ -82,7 +82,8 @@ public class SyntaxAnalyzer {
         map.put("^-?\\d+$", "NUMBR Literal");
         map.put("^([+-]?\\d*\\.\\d*)$", "NUMBAR Literal");
         map.put("^\".*\"$", "YARN Literal");
-        map.put("^WIN$|^FAIL$", "TROOF Literal");
+        map.put("^WIN$", "WIN TROOF Literal");
+        map.put("^FAIL$", "FAIL TROOF Literal");
     
         // map.put("^[A-Za-z]+[A-Za-z0-9_]*$", "Variable");
         map.put("^HOW IZ I$", "Function Identifier");
@@ -217,7 +218,9 @@ public class SyntaxAnalyzer {
         //grammar.put("NUMBAR Literal", "^[+-]?([0-9]+[.]){1}[0-9]+");
         grammar.put("NUMBAR Literal", "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
         grammar.put("YARN Literal", "^\".*\"$");
-        grammar.put("TROOF Literal", "^WIN$|^FAIL$"); //.substring() doesnt produce correct results kaya inalter muna yung values, should be ^WIN$|^FAIL$
+        grammar.put("TROOF Literal", "WIN|FAIL");
+        grammar.put("WIN TROOF Literal", "^WIN$"); //.substring() doesnt produce correct results kaya inalter muna yung values, should be ^WIN$|^FAIL$
+        grammar.put("FAIL TROOF Literal", "^FAIL$");
         grammar.put("Variable Initialization number", "^I HAS A [A-Za-z]+[A-Za-z0-9_]* ITZ [-?\\d+|\"-?\\d+\"]*$");
         // grammar.put("Variable Initialization", "^I HAS A [A-Za-z]+[A-Za-z0-9_]* ITZ (" + map.get("Variable").replaceAll("^.|.$", "") 
         // +")$");
@@ -384,6 +387,18 @@ public class SyntaxAnalyzer {
         + grammar.get("Division").replaceAll("^.|.$", "") + "|" 
         + grammar.get("Mod").replaceAll("^.|.$", "") + "|" 
         + grammar.get("Addition").replaceAll("^.|.$", "")
+        + grammar.get("NUMBAR Literal").replaceAll("^.|.$", "") + "|"
+        + grammar.get("NUMBR Literal").replaceAll("^.|.$", "")+"|"
+        + grammar.get("YARN Literal").replaceAll("^.|.$", "")+"|"
+        + grammar.get("WIN TROOF Literal").replaceAll("^.|.$", "")+"|"
+        + grammar.get("FAIL TROOF Literal").replaceAll("^.|.$", "")+"|"
+        + grammar.get("Both saem").replaceAll("^.|.$", "") + "|"
+        + grammar.get("Diffrint").replaceAll("^.|.$", "") + "|"
+        + grammar.get("Both saem smallr").replaceAll("^.|.$", "") + "|"
+        + grammar.get("Both saem biggr").replaceAll("^.|.$", "") + "|"
+        + grammar.get("Diffrint smallr").replaceAll("^.|.$", "") + "|"
+        + grammar.get("Diffrint biggr").replaceAll("^.|.$", "") + "|"
+        + var.get("Variable").replaceAll("^.|.$", "")+"|"
         +  ")$");
 
         grammar.put("Variable Initialization Expression", "^I HAS A [A-Za-z]+[A-Za-z0-9_]* ITZ ("
@@ -489,7 +504,7 @@ public class SyntaxAnalyzer {
 
         // read file and store strings into array 
         try {                                      
-        File file = new File("variables.txt"); //file name
+        File file = new File("assignment.txt"); //file name
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
             String data = scanner.nextLine();
@@ -825,7 +840,85 @@ public class SyntaxAnalyzer {
                             // Assignment Statements
                             if(pairs.get(temp.get(0)).equals("Variable") || op_bypass == 1){
                                 if(temp.get(1).equals("R") || op_bypass == 1){
-                                    int counter = 0, op = 0;
+                                    if(pairs.get(temp.get(2)).equals("== Comparison Operator") || pairs.get(temp.get(2)).equals("!= Comparison Operator")){
+                        // added for comparison operations
+                        if(temp.size() > 4){
+                            // BOTH SAEM  for assignment operation
+                            if(pairs.get(temp.get(2)).equals("== Comparison Operator")){
+                                arg1 = Float.parseFloat(temp.get(3));
+                                // BIGGR
+                                if(pairs.get(temp.get(5)).equals("max")){
+                                    arg2 = Float.parseFloat(temp.get(8));
+                                    if(arg1 >= arg2){
+                                        var_map.put(temp.get(0),"WIN");
+                                        //System.out.println("TRUE");
+                                    }else{
+                                        var_map.put(temp.get(0),"FAIL");
+                                        //System.out.println("FALSE");
+                                    }
+                                }
+                                // SMALLR
+                                else if(pairs.get(temp.get(5)).equals("min")){
+                                    arg2 = Float.parseFloat(temp.get(8));
+                                    if(arg1 <= arg2){
+                                        var_map.put(temp.get(0),"WIN");
+                                        //System.out.println("TRUE");
+                                    }else{
+                                        var_map.put(temp.get(0),"FAIL");
+                                        //System.out.println("FALSE");
+                                    }
+                                }
+                                else{
+                                    arg2 = Float.parseFloat(temp.get(5));
+                                    if(arg1 == arg2){
+                                        var_map.put(temp.get(0),"WIN");
+                                        //System.out.println("TRUE");
+                                    }else{
+                                        var_map.put(temp.get(0),"FAIL");
+                                        //System.out.println("FALSE");
+                                    }
+                                }
+                            }
+
+                                                // DIFFRINT
+                            if(pairs.get(temp.get(2)).equals("!= Comparison Operator")){
+                                arg1 = Float.parseFloat(temp.get(3));
+                                // BIGGR
+                                if(pairs.get(temp.get(5)).equals("max")){
+                                    arg2 = Float.parseFloat(temp.get(8));
+                                    if(arg1 < arg2){
+                                        //System.out.println("WIN");
+                                        var_map.put(temp.get(0),"WIN");
+                                    }else{
+                                        //System.out.println("FAIL");
+                                        var_map.put(temp.get(0),"FAIL");
+                                    }
+                                }
+                                // SMALLR
+                                else if(pairs.get(temp.get(5)).equals("min")){
+                                    arg2 = Float.parseFloat(temp.get(8));
+                                    if(arg1 > arg2){
+                                        //System.out.println("WIN");
+                                        var_map.put(temp.get(0),"WIN");
+                                    }else{
+                                        //System.out.println("FALSE");
+                                        var_map.put(temp.get(0),"FAIL");
+                                    }
+                                }
+                                else{
+                                    arg2 = Float.parseFloat(temp.get(5));
+                                    if(arg1 != arg2){
+                                        //System.out.println("WIN");
+                                        var_map.put(temp.get(0),"WIN");
+                                    }else{
+                                        //System.out.println("FAIL");
+                                        var_map.put(temp.get(0),"FAIL");
+                                    }
+                                }
+                            }
+                        }
+                                    }else{
+                                        int counter = 0, op = 0;
                                     // If VARIABLE R SUM OF 5 AN 6
                                     if(save_to_it == 0){
                                         counter = 3;        // start of the number
@@ -931,6 +1024,7 @@ public class SyntaxAnalyzer {
                                         }else{
                                             counter = counter + 2;
                                         }  
+  
                                     }
                                     // SAVE TO VARIABLE
                                     if(save_to_it == 0){
@@ -943,14 +1037,23 @@ public class SyntaxAnalyzer {
                                     else if (save_to_it == 2){
                                         var_map.put(temp.get(1),Float.toString(accum));
                                     }
-                                    
+                                    }
                                 }
                             }
 
+                            
+
+                                        
                             // R
                             if (for_sem_analysis.get(i).size() == 3){
                                 if(pairs.get(temp.get(1)).equals("Assignment operation")){
-                                    var_map.put(temp.get(0),temp.get(2));
+                                    // if variable R variable
+                                    if(var_map.containsKey(temp.get(2))){
+                                        var_map.put(temp.get(0),var_map.get(temp.get(2)));
+                                    }else{
+                                        var_map.put(temp.get(0),temp.get(2));
+                                    }
+                                    
                                 }
                             }
 
@@ -975,11 +1078,18 @@ public class SyntaxAnalyzer {
                                         print_statement = print_statement + temp.get(loop_print) + " ";
                                     }
                                     System.out.println(print_statement);
-                                }else{
+                                }else{      
                                     if(var_map.containsKey(temp.get(1))){
                                         System.out.println(var_map.get(temp.get(1)));
                                     }else{
                                         System.out.println(temp.get(1));
+                                        if(pairs.get(temp.get(1)).equals("Invalid Token")){
+                                            System.out.println("Undeclared Variable");
+                                            found = false;
+                                        }else{
+                                            System.out.println(temp.get(1));
+                                        }
+                                        
                                     } 
                                 }
 

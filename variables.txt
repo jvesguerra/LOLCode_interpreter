@@ -13,9 +13,9 @@ HAI
     VISIBLE temp6
     I HAS A temp7 ITZ MOD OF 2 AN 3
     VISIBLE temp7
-    VISIBLE bigger
     I HAS A temp8 ITZ BIGGR OF 5 AN 3
     VISIBLE temp8
     I HAS A temp9 ITZ SMALLR OF 1000 AN 3
     VISIBLE temp9
+    VISIBLE bigger
 KTHXBYE
